@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
 
         foreach (var item in PlayerManager._instance.players)
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 8   ; i++)
             {
                 CardClass card = BalootGameManager._instance.baloot.cardsToBeCollected[
                     Random.Range(0, BalootGameManager._instance.baloot.cardsToBeCollected.Count)

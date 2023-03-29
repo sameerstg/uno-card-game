@@ -171,133 +171,199 @@ MonoBehaviour:
     totalCards:
     - house: 0
       cardName: 0
+      points: 0
     - house: 0
       cardName: 1
+      points: 0
     - house: 0
       cardName: 2
+      points: 0
     - house: 0
       cardName: 3
+      points: 0
     - house: 0
       cardName: 4
+      points: 0
     - house: 0
       cardName: 5
+      points: 0
     - house: 0
       cardName: 6
+      points: 0
     - house: 0
       cardName: 7
+      points: 0
     - house: 1
       cardName: 0
+      points: 0
     - house: 1
       cardName: 1
+      points: 0
     - house: 1
       cardName: 2
+      points: 0
     - house: 1
       cardName: 3
+      points: 0
     - house: 1
       cardName: 4
+      points: 0
     - house: 1
       cardName: 5
+      points: 0
     - house: 1
       cardName: 6
+      points: 0
     - house: 1
       cardName: 7
+      points: 0
     - house: 2
       cardName: 0
+      points: 0
     - house: 2
       cardName: 1
+      points: 0
     - house: 2
       cardName: 2
+      points: 0
     - house: 2
       cardName: 3
+      points: 0
     - house: 2
       cardName: 4
+      points: 0
     - house: 2
       cardName: 5
+      points: 0
     - house: 2
       cardName: 6
+      points: 0
     - house: 2
       cardName: 7
+      points: 0
     - house: 3
       cardName: 0
+      points: 0
     - house: 3
       cardName: 1
+      points: 0
     - house: 3
       cardName: 2
+      points: 0
     - house: 3
       cardName: 3
+      points: 0
     - house: 3
       cardName: 4
+      points: 0
     - house: 3
       cardName: 5
+      points: 0
     - house: 3
       cardName: 6
+      points: 0
     - house: 3
       cardName: 7
+      points: 0
     cardsToBeCollected:
     - house: 0
       cardName: 0
+      points: 0
     - house: 0
       cardName: 1
+      points: 0
     - house: 0
       cardName: 2
+      points: 0
     - house: 0
       cardName: 3
+      points: 0
     - house: 0
       cardName: 4
+      points: 0
     - house: 0
       cardName: 5
+      points: 0
     - house: 0
       cardName: 6
+      points: 0
     - house: 0
       cardName: 7
+      points: 0
     - house: 1
       cardName: 0
+      points: 0
     - house: 1
       cardName: 1
+      points: 0
     - house: 1
       cardName: 2
+      points: 0
     - house: 1
       cardName: 3
+      points: 0
     - house: 1
       cardName: 4
+      points: 0
     - house: 1
       cardName: 5
+      points: 0
     - house: 1
       cardName: 6
+      points: 0
     - house: 1
       cardName: 7
+      points: 0
     - house: 2
       cardName: 0
+      points: 0
     - house: 2
       cardName: 1
+      points: 0
     - house: 2
       cardName: 2
+      points: 0
     - house: 2
       cardName: 3
+      points: 0
     - house: 2
       cardName: 4
+      points: 0
     - house: 2
       cardName: 5
+      points: 0
     - house: 2
       cardName: 6
+      points: 0
     - house: 2
       cardName: 7
+      points: 0
     - house: 3
       cardName: 0
+      points: 0
     - house: 3
       cardName: 1
+      points: 0
     - house: 3
       cardName: 2
+      points: 0
     - house: 3
       cardName: 3
+      points: 0
     - house: 3
       cardName: 4
+      points: 0
     - house: 3
       cardName: 5
+      points: 0
     - house: 3
       cardName: 6
+      points: 0
     - house: 3
       cardName: 7
+      points: 0
+    playedCards: []
+    trump: 0
 --- !u!1 &36035768
 GameObject:
   m_ObjectHideFlags: 0
@@ -413,6 +479,7 @@ Transform:
   m_Children:
   - {fileID: 1479374358}
   - {fileID: 30384122}
+  - {fileID: 1150845809}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -428,6 +495,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a265b6b1bf843cd44ad90fa695e9a82e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameState: 0
+--- !u!1 &1150845808
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1150845809}
+  m_Layer: 0
+  m_Name: Room Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1150845809
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1150845808}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 843316277}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1479374357
 GameObject:
   m_ObjectHideFlags: 0

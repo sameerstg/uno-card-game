@@ -13,6 +13,7 @@ public class CardClass
 {
     public House house;
     public CardName cardName;
+    public int points;
     public CardClass(House house, CardName cardName)
     {
         this.house = house;
@@ -33,6 +34,7 @@ public class Baloot
     public CardClass[] totalCards;
     public List<CardClass> cardsToBeCollected;
     public List<CardClass> playedCards;
+    public House trump;
 
     public Baloot()
     {
@@ -44,6 +46,9 @@ public class Baloot
                 foreach (var cardName in Enum.GetNames(typeof(CardName)))
                 {
                     totalCards[i] = new(Enum.Parse<House>(house), Enum.Parse<CardName>(cardName));
+                    if (totalCards[i].cardName == CardName.Ace && totalCards[i].house == House.club)
+                    {
+                    }
                     i++;
                     continue;
                 }
