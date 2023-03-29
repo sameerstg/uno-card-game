@@ -14,12 +14,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public static RoomManager _instance;
     public TextMeshProUGUI statusText;
     PhotonView photonViewComponent;
-    GameManager gm;
-    public string balanceOfMatch;
+    public BalootPlayer balootPlayer;
     public bool DidTimeout { private set; get; }
     static readonly RoomOptions s_RoomOptions = new RoomOptions
     {
-        MaxPlayers = 2,
+        MaxPlayers = 4,
         EmptyRoomTtl = 5,
         PublishUserId = true,
 
@@ -32,11 +31,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
         photonViewComponent = GetComponent<PhotonView>();
 
     }
-    //private void Start()
-    //{
-    //    JoinOrCreateRoom("1");
+    private void Start()
+    {
+        JoinOrCreateRoom("1");
 
-    //}
+    }
     public void ReleaseBalance(string name)
     {
        
@@ -164,25 +163,36 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public void InstantiateGame()
     {
         Debug.Log("Room Objects Created");
-        PhotonNetwork.InstantiateRoomObject("Manager Holder", new Vector3(), Quaternion.identity);
+        PhotonNetwork.InstantiateRoomObject("GameManager", new Vector3(), Quaternion.identity);
+    } [PunRPC]
+    public void InstantiatePlayer()
+    {
+        Debug.Log("Player Created");
+        PhotonNetwork.InstantiateRoomObject("Player", new Vector3(), Quaternion.identity);
     }
     IEnumerator SynchroniseGame()
     {
-        var roomName = PhotonNetwork.CurrentRoom.Name;
 
-        Debug.Log(roomName.Substring(roomName.IndexOf(":") + 2));
 
-        balanceOfMatch = roomName.Substring(roomName.IndexOf(":") + 2);
         while (GameManager._instance == null)
         {
             yield return null;
         }
-        gm = GameManager._instance;
-
-        while (GameManager._instance.gameState == GameState.Initiating)
+        GameManager._instance.gameState = GameState.Initiating;
+        while (GameManager._instance.gameState != GameState.Initiating)
         {
             Debug.Log("GameManager.gameState == GameState.Initiating");
             yield return null;
+        }
+        if (PlayerManager._instance.CanPlayerJoinGame())
+        {
+            photonViewComponent.RPC(nameof(InstantiatePlayer), RpcTarget.AllBufferedViaServer);
+            
+            GameManager._instance.gameState = GameState.PostInstantiate;
+        }
+        else
+        {
+            Debug.LogError("Players slot is full");
         }
 
         while (GameManager._instance.gameState != GameState.PostInstantiate)
@@ -191,14 +201,26 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
             yield return null;
         }
+        BalootPlayer[] players = FindObjectsOfType<BalootPlayer>();
+        foreach (var item in players)
+        {
+            if (item.GetComponent<PhotonView>().IsMine)
+            {
+                balootPlayer = item;
+                Debug.Log("Got Player");
+                break;
+            }
+        }
+        photonViewComponent.RPC(nameof(AssignPlayer), RpcTarget.AllBufferedViaServer,new object[] { balootPlayer});
+
         if (PhotonNetwork.IsMasterClient)
         {
             SetGameData();
-
         }
         else
         {
-                   }
+                   
+        }
 
        /* if (AssignPlayer())
         {
@@ -209,21 +231,21 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }*/
 
         GameManager._instance.gameState = GameState.WaitingForOpponent;
-       /* if (GameManager._instance.playerManagerChess.GetPlayerCount() == 2)
+        if (!PlayerManager._instance.CanPlayerJoinGame())
         {
 
 
-            SetGameState(GameState.GameStarted);
+           /* SetGameState(GameState.GameStarted);
             SetGameData();
-            UpdateGameStateToAllPun();
+            UpdateGameStateToAllPun();*/
 
-        }*/
+        }
 
 
         while (GameManager._instance.gameState == GameState.WaitingForOpponent)
         {
-            //Debug.Log("waiting for player");
-            GameObject.FindGameObjectWithTag("Loading").GetComponent<TextMeshProUGUI>().text = "Waiting for player ....";
+            Debug.Log("waiting for player");
+            //GameObject.FindGameObjectWithTag("Loading").GetComponent<TextMeshProUGUI>().text = "Waiting for player ....";
             yield return null;
         }
 
@@ -242,18 +264,13 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
 
     }
-
-    void SetGameState(GameState state)
+[PunRPC]
+    private void AssignPlayer(BalootPlayer balootPlayer)
     {
-        photonView.RPC(nameof(SetGameStatePun), RpcTarget.All, new object[] { state });
-
+        Debug.Log(balootPlayer);
+        PlayerManager._instance.AssignPlayer(balootPlayer); 
     }
-    [PunRPC]
-    void SetGameStatePun(GameState state)
-    {
-        gm.gameState = state;
 
-    }
     internal void SetGameData()
     {
 
