@@ -29,11 +29,17 @@ public class BalootGameManager : MonoBehaviour
         {
             for (int i = 0; i < 8; i++)
             {
+                
+                Debug.Log(baloot.cardsToBeCollected.Count);
                 CardClass card = baloot.cardsToBeCollected[
                     Random.Range(0, baloot.cardsToBeCollected.Count)
                     ];
                 GiveCardToPlayer(item, card);
                baloot.cardsToBeCollected.Remove(card);
+                if (baloot.cardsToBeCollected.Count == 0)
+                {
+                    return;
+                }
             }
         }
     }

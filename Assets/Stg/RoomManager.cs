@@ -173,7 +173,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public void InstantiatePlayer()
     {
         Debug.Log("Player Created");
-        PhotonNetwork.InstantiateRoomObject("Player", new Vector3(), Quaternion.identity);
+        var obj = Instantiate(Resources.Load<GameObject>("Player"));
+            balootPlayer = obj.GetComponent<BalootPlayer>();
         Debug.LogError("Instantiated Player");
         BalootPlayer[] players = FindObjectsOfType<BalootPlayer>();
         Debug.Log(players.Length);
@@ -182,12 +183,16 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
             if (item.GetComponent<PhotonView>().IsMine)
             {
-
                 balootPlayer = item;
                 Debug.Log("Got Player");
-                photonViewComponent.RPC(nameof(AssignPlayer), RpcTarget.AllBufferedViaServer);
                 break;
             }
+        }
+        if (players.Length == 4)
+        {
+
+            Debug.LogError("Cards distributed");
+            photonViewComponent.RPC(nameof(GiveCardsToPlayerPun), RpcTarget.AllBufferedViaServer);
         }
         GameManager._instance.gameState = GameState.PostInstantiate;
         
@@ -200,30 +205,21 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             yield return null;
         }
-        GameManager._instance.gameState = GameState.Initiating;
-        while (GameManager._instance.gameState != GameState.Initiating)
-        {
-            Debug.Log("GameManager.gameState == GameState.Initiating");
-            yield return null;
-        }
-        if (!PlayerManager._instance.CanPlayerJoinGame())
+              if (!PlayerManager._instance.CanPlayerJoinGame())
         {
             StopCoroutine(SynchroniseGame());
         }
 
-
-        photonViewComponent.RPC(nameof(InstantiatePlayer), RpcTarget.AllBufferedViaServer );
-       
-       
-        while (GameManager._instance.gameState != GameState.PostInstantiate)
+                photonViewComponent.RPC(nameof(InstantiatePlayer), RpcTarget.AllBufferedViaServer );
+                photonViewComponent.RPC(nameof(AssignPlayer), RpcTarget.AllBufferedViaServer );
+            
+        while(GameManager._instance.gameState == GameState.WaitingForOpponent)
         {
-            Debug.Log("GameManager.gameState != GameState.PostInstantiate");
-
             yield return null;
-        }
 
-        
+        }
         if (PhotonNetwork.IsMasterClient)
+
         {
             SetGameData();
         }
@@ -231,23 +227,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
                    
         }
-
-       /* if (AssignPlayer())
-        {
-            SetPlayerAndPlayerBoard();
-
-            SetGamePlayerData();
-            photonView.RPC(nameof(UpdateGameDataToAll), RpcTarget.All);
-        }*/
-
+     
         GameManager._instance.gameState = GameState.WaitingForOpponent;
         if (!PlayerManager._instance.CanPlayerJoinGame())
         {
 
-
-           /* SetGameState(GameState.GameStarted);
-            SetGameData();
-            UpdateGameStateToAllPun();*/
 
         }
 
@@ -259,23 +243,13 @@ public class RoomManager : MonoBehaviourPunCallbacks
             {
                 GameManager._instance.gameState = GameState.InGame;
             }
-                                                   //GameObject.FindGameObjectWithTag("Loading").GetComponent<TextMeshProUGUI>().text = "Waiting for player ....";
+            //GameObject.FindGameObjectWithTag("Loading").GetComponent<TextMeshProUGUI>().text = "Waiting for player ....";
             yield return null;
         }
 
 
-        //Destroy(GameObject.FindGameObjectWithTag("Loading"));
-        if (PhotonNetwork.IsMasterClient)
-        {
-            photonViewComponent.RPC(nameof(GiveCardsToPlayer), RpcTarget.AllBufferedViaServer);
-
-        }
-        var roomName1 = PhotonNetwork.CurrentRoom.Name;
-        
-        //DatabaseManager._instance.AddBalance(roomName.Substring(roomName.IndexOf(":") + 2));
         while (GameManager._instance.gameState != GameState.InGame)
         {
-            //Debug.Log("waiting to start game");
             yield return null;
         }
        
@@ -284,7 +258,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     }
     [PunRPC]
-    void GiveCardsToPlayer()
+    void GiveCardsToPlayerPun()
     {
         BalootGameManager._instance.GiveCardsToPlayer();
     }
@@ -292,24 +266,14 @@ public class RoomManager : MonoBehaviourPunCallbacks
     private void AssignPlayer()
     {
         Debug.Log(balootPlayer);
-        PlayerManager._instance.AssignPlayer(balootPlayer); 
-    }
+        PlayerManager._instance.AssignPlayer(balootPlayer);
+            }
 
     internal void SetGameData()
     {
 
            }
-          //   internal void SaveGameMovesData()
-    //{
-    //    Debug.Log("Saving Game Moves Data");
-    //    ExitGames.Client.Photon.Hashtable properties = PhotonNetwork.CurrentRoom.CustomProperties;
-    //    properties["history"] = JsonUtility.ToJson(bm.grid.history);
-    //    GameManager._instance.turn = (colorSide)JsonUtility.FromJson(properties["turn"].ToString(), typeof(colorSide));
-    //    PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
-    //    UpdateGameStateToAllPun();
-
-    //}
-
+         
   
     #endregion
 }
