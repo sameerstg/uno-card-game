@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Linq;
 public class BalootGameManager : MonoBehaviour
 {
     public static BalootGameManager _instance;
@@ -37,9 +37,10 @@ public class BalootGameManager : MonoBehaviour
             }
         }
     }
-    public void PlayCard(CardClass card)
+    public void PlayCard(BalootPlayer player, CardClass card)
     {
-        baloot.playedCards.Add(card);
+        player.cards.Remove(card);
+                baloot.playedCards.Add(card);
     }
     void GiveCardToPlayer(BalootPlayer player, CardClass card)
     {

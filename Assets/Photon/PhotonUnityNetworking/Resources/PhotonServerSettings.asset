@@ -26,24 +26,23 @@ MonoBehaviour:
     Protocol: 0
     EnableProtocolFallback: 1
     AuthMode: 0
-    EnableLobbyStatistics: 1
-    NetworkLogging: 3
+    EnableLobbyStatistics: 0
+    NetworkLogging: 1
   DevRegion: eu
-  PunLogging: 2
+  PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
-  StartInOfflineMode: 1
+  StartInOfflineMode: 0
   RpcList:
+  - AssignPlayer
   - ClickRpc
   - DestroyRpc
   - DestroySpaceship
   - Fire
-  - RespawnSpaceship
+  - GiveCardsToPlayer
   - InstantiateGame
-  - MovePun
-  - SetGameStatePun
   - InstantiatePlayer
-  - AssignPlayer
+  - RespawnSpaceship
   DisableAutoOpenWizard: 1
   ShowSettings: 1
-  DevRegionSetOnce: 1
+  DevRegionSetOnce: 0

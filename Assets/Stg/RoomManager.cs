@@ -29,12 +29,14 @@ public class RoomManager : MonoBehaviourPunCallbacks
         _instance = this;
         Assert.AreEqual(1, FindObjectsOfType<RoomManager>().Length);
         photonViewComponent = GetComponent<PhotonView>();
+       
+        
+
 
     }
     private void Start()
     {
-        JoinOrCreateRoom("1");
-
+        JoinOrCreateRoom("3253125saf");
     }
     public void ReleaseBalance(string name)
     {
@@ -50,12 +52,13 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public override void OnCreatedRoom()
     {
         base.OnCreatedRoom();
-        Debug.Log("Created Room");
+        Debug.LogError("Created Room");
         //InstantiateGame();
+
 
         photonViewComponent.RPC(nameof(InstantiateGame), RpcTarget.AllBufferedViaServer);
 
-
+        Debug.LogError(PhotonNetwork.CurrentRoom.PlayerCount);
     }
     public override void OnJoinedRoom()
     {
@@ -115,8 +118,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
 
         if (!PhotonNetwork.InLobby && PhotonNetwork.NetworkClientState != ClientState.JoiningLobby)
-            Debug.Log($"Connecting to server ,state ={PhotonNetwork.NetworkClientState}");
         {
+            Debug.Log($"Connecting to server ,state ={PhotonNetwork.NetworkClientState}");
             PhotonNetwork.JoinLobby();
 
         }
@@ -130,16 +133,17 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
         if (preferredRoomName != null)
         {
-            Debug.Log("Joining or creating Room");
+            Debug.LogError("Joining or creating Room");
 
             bool isJoined = PhotonNetwork.JoinOrCreateRoom(preferredRoomName, s_RoomOptions, TypedLobby.Default);
         }
         else
         {
-            Debug.Log("Joined Random Room");
+            Debug.LogError("Joined Random Room");
 
             PhotonNetwork.JoinRandomRoom();
         }
+        
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
@@ -164,17 +168,35 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Room Objects Created");
         PhotonNetwork.InstantiateRoomObject("GameManager", new Vector3(), Quaternion.identity);
-    } [PunRPC]
+    }
+    [PunRPC]
     public void InstantiatePlayer()
     {
         Debug.Log("Player Created");
         PhotonNetwork.InstantiateRoomObject("Player", new Vector3(), Quaternion.identity);
+        Debug.LogError("Instantiated Player");
+        BalootPlayer[] players = FindObjectsOfType<BalootPlayer>();
+        Debug.Log(players.Length);
+        foreach (var item in players)
+        {
+
+            if (item.GetComponent<PhotonView>().IsMine)
+            {
+
+                balootPlayer = item;
+                Debug.Log("Got Player");
+                photonViewComponent.RPC(nameof(AssignPlayer), RpcTarget.AllBufferedViaServer);
+                break;
+            }
+        }
+        GameManager._instance.gameState = GameState.PostInstantiate;
+        
     }
     IEnumerator SynchroniseGame()
     {
 
 
-        while (GameManager._instance == null)
+        while (GameManager._instance == null )
         {
             yield return null;
         }
@@ -184,35 +206,23 @@ public class RoomManager : MonoBehaviourPunCallbacks
             Debug.Log("GameManager.gameState == GameState.Initiating");
             yield return null;
         }
-        if (PlayerManager._instance.CanPlayerJoinGame())
+        if (!PlayerManager._instance.CanPlayerJoinGame())
         {
-            photonViewComponent.RPC(nameof(InstantiatePlayer), RpcTarget.AllBufferedViaServer);
-            
-            GameManager._instance.gameState = GameState.PostInstantiate;
-        }
-        else
-        {
-            Debug.LogError("Players slot is full");
+            StopCoroutine(SynchroniseGame());
         }
 
+
+        photonViewComponent.RPC(nameof(InstantiatePlayer), RpcTarget.AllBufferedViaServer );
+       
+       
         while (GameManager._instance.gameState != GameState.PostInstantiate)
         {
             Debug.Log("GameManager.gameState != GameState.PostInstantiate");
 
             yield return null;
         }
-        BalootPlayer[] players = FindObjectsOfType<BalootPlayer>();
-        foreach (var item in players)
-        {
-            if (item.GetComponent<PhotonView>().IsMine)
-            {
-                balootPlayer = item;
-                Debug.Log("Got Player");
-                break;
-            }
-        }
-        photonViewComponent.RPC(nameof(AssignPlayer), RpcTarget.AllBufferedViaServer,new object[] { balootPlayer});
 
+        
         if (PhotonNetwork.IsMasterClient)
         {
             SetGameData();
@@ -242,30 +252,44 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
 
 
+            Debug.Log("waiting for player");
         while (GameManager._instance.gameState == GameState.WaitingForOpponent)
         {
-            Debug.Log("waiting for player");
-            //GameObject.FindGameObjectWithTag("Loading").GetComponent<TextMeshProUGUI>().text = "Waiting for player ....";
+            if (!PlayerManager._instance.CanPlayerJoinGame())
+            {
+                GameManager._instance.gameState = GameState.InGame;
+            }
+                                                   //GameObject.FindGameObjectWithTag("Loading").GetComponent<TextMeshProUGUI>().text = "Waiting for player ....";
             yield return null;
         }
 
 
-        Destroy(GameObject.FindGameObjectWithTag("Loading"));
+        //Destroy(GameObject.FindGameObjectWithTag("Loading"));
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonViewComponent.RPC(nameof(GiveCardsToPlayer), RpcTarget.AllBufferedViaServer);
 
+        }
         var roomName1 = PhotonNetwork.CurrentRoom.Name;
-
+        
         //DatabaseManager._instance.AddBalance(roomName.Substring(roomName.IndexOf(":") + 2));
         while (GameManager._instance.gameState != GameState.InGame)
         {
             //Debug.Log("waiting to start game");
             yield return null;
         }
+       
         CeaseMoney();
-
+        
 
     }
-[PunRPC]
-    private void AssignPlayer(BalootPlayer balootPlayer)
+    [PunRPC]
+    void GiveCardsToPlayer()
+    {
+        BalootGameManager._instance.GiveCardsToPlayer();
+    }
+    [PunRPC]
+    private void AssignPlayer()
     {
         Debug.Log(balootPlayer);
         PlayerManager._instance.AssignPlayer(balootPlayer); 
