@@ -28,6 +28,7 @@ public class PlayerManager : MonoBehaviour
                 if (players[i] == null)
                 {
                     players[i] = player;
+                    GameUIManager._instance.nameTitles[i].text = $"Player {i + 1}";
                     Debug.LogError("Player Assigned");
                     return;
                 }
