@@ -41,11 +41,11 @@ public class PlayerManager : MonoBehaviour
                     }*/
                     players[i].balootPlayerClass = player;
                     //players[i] = player;
-                    GameUIManager._instance.nameTitles[i].text = $"{player.playerName}";
+                    GameUIManager._instance.slots[i].nameTitle.text = $"{player.playerName}";
                     Debug.LogError("Player Assigned");
                     if (RoomManager._instance.balootPlayerClass.playerName == player.playerName)
                     {
-                        GameUIManager._instance.nameTitles[i].color = Color.red;
+                        GameUIManager._instance.slots[i].nameTitle.color = Color.red;
                         RoomManager._instance.indexOfPlayer = i;
                     }
                     if (i==3)

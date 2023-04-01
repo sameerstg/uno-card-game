@@ -2,14 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Photon.Pun;
+using Newtonsoft.Json;
+
 public class BalootGameManager : MonoBehaviour
 {
     public static BalootGameManager _instance;
     
     public Baloot baloot;
+    public PhotonView photonView;
     private void Awake()
     {
         _instance = this;
+        photonView = GetComponent<PhotonView>();
       
 
     }
@@ -24,9 +29,9 @@ public class BalootGameManager : MonoBehaviour
     }
     public void GiveCardsToPlayer()
     {
-
-        foreach (var item in PlayerManager._instance.players)
+        for (int j = 0; j < PlayerManager._instance.players.Length; j++)
         {
+
             for (int i = 0; i < 8; i++)
             {
                 
@@ -34,23 +39,59 @@ public class BalootGameManager : MonoBehaviour
                 CardClass card = baloot.cardsToBeCollected[
                     Random.Range(0, baloot.cardsToBeCollected.Count)
                     ];
-                GiveCardToPlayer(item.balootPlayerClass, card);
+                GiveCardToPlayer(PlayerManager._instance.players[j].balootPlayerClass, card);
                baloot.cardsToBeCollected.Remove(card);
                 if (baloot.cardsToBeCollected.Count == 0)
                 {
+                    GameUIManager._instance.slots[baloot.turn].turn.gameObject.SetActive(true);
+
+                    GameUIManager._instance.RefereshCards();
                     return;
                 }
+                
             }
+
+
         }
+        
     }
-    public void PlayCard(BalootPlayerClass player, CardClass card)
+    [PunRPC]
+    public void PlayCardPun(/*string turn*/)
     {
-        player.cards.Remove(card);
-                baloot.playedCards.Add(card);
+
+        /*turn.player.cards.Remove(turn.card);
+                baloot.playedCards.Add(turn.card);
+
+        ChangeTurn();
+        GameUIManager._instance.RefereshCards();*/
+
+        baloot.playedCards.Add(PlayerManager._instance.players[baloot.turn].balootPlayerClass.cards[0]);
+        PlayerManager._instance.players[baloot.turn].balootPlayerClass.cards.
+            Remove(PlayerManager._instance.players[baloot.turn].balootPlayerClass.cards[0]);
+
+        ChangeTurn();
+        GameUIManager._instance.RefereshCards();
+    }
+    public void PlayCard(/*Turn turn*/)
+    {
+        photonView.RPC(nameof(
+        PlayCardPun),RpcTarget.AllBufferedViaServer)/*JsonConvert.DeserializeObject<Turn>(turn)*/;
+
     }
     void GiveCardToPlayer(BalootPlayerClass player, CardClass card)
     {
         player.cards.Add(card);
+    }
+    void ChangeTurn()
+    {
+        GameUIManager._instance.slots[baloot.turn].turn.gameObject.SetActive(false);
+        baloot.turn++;
+        if (baloot.turn>3)
+        {
+            baloot.turn = 0;
+        }
+        GameUIManager._instance.slots[baloot.turn].turn.gameObject.SetActive(true);
+
     }
 
 }

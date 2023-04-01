@@ -5,25 +5,29 @@ public class GameUIManager : MonoBehaviour
 {
     public static GameUIManager _instance;
     public GameObject slotParrent;
-    public GameObject[] slots;
-    public TextMeshProUGUI[] nameTitles;
+    public Slot[] slots;
+    
     public string nameOfPlayer;
     
     private void Awake()
     {
         _instance = this;
-        slots = new GameObject[slotParrent.transform.childCount];
-        nameTitles = new TextMeshProUGUI[slotParrent.transform.childCount];
-        slotParrent.gameObject.SetActive(true);
-        for (int i = 0; i < slotParrent.transform.childCount; i++)
+        
+       
+
+    }
+    public void RefereshCards()
+    {
+        for (int i = 0; i < PlayerManager._instance.players.Length; i++)
         {
-            
-            slots[i] = slotParrent.transform.GetChild(i).gameObject;
-            nameTitles[i] = slotParrent.transform.GetChild(i).GetComponentInChildren<TextMeshProUGUI>();
-            nameTitles[i].text = "";
+        slots[i].cardsText.text = "||";
+            for (int k = 0; k < PlayerManager._instance.players[i].balootPlayerClass.cards.Count; k++)
+            {
+                slots[i].cardsText.text += $" {PlayerManager._instance.players[i].balootPlayerClass.cards[k].house} |" +
+                    $" {PlayerManager._instance.players[i].balootPlayerClass.cards[k].cardName} ||";
+            }
         }
-        slotParrent.gameObject.SetActive(false);
 
-
+        
     }
 }

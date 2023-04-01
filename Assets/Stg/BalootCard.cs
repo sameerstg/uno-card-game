@@ -38,7 +38,7 @@ public class Baloot
     public List<CardClass> cardsToBeCollected;
     public List<CardClass> playedCards;
     public House trump;
-
+    public int turn;
     public Baloot()
     {
         totalCards = new CardClass[32];
