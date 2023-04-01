@@ -20,10 +20,13 @@ public class CardClass
         this.cardName = cardName;
     }
 }
+[System.Serializable]
+
 public enum House
 {
     spade,heart,diamond,club
 }
+[System.Serializable]
 public enum CardName
 {
     Ace,King,Queen,Jack,ten,nine,eight,seven

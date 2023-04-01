@@ -34,7 +34,7 @@ public class BalootGameManager : MonoBehaviour
                 CardClass card = baloot.cardsToBeCollected[
                     Random.Range(0, baloot.cardsToBeCollected.Count)
                     ];
-                GiveCardToPlayer(item, card);
+                GiveCardToPlayer(item.balootPlayerClass, card);
                baloot.cardsToBeCollected.Remove(card);
                 if (baloot.cardsToBeCollected.Count == 0)
                 {
@@ -43,12 +43,12 @@ public class BalootGameManager : MonoBehaviour
             }
         }
     }
-    public void PlayCard(BalootPlayer player, CardClass card)
+    public void PlayCard(BalootPlayerClass player, CardClass card)
     {
         player.cards.Remove(card);
                 baloot.playedCards.Add(card);
     }
-    void GiveCardToPlayer(BalootPlayer player, CardClass card)
+    void GiveCardToPlayer(BalootPlayerClass player, CardClass card)
     {
         player.cards.Add(card);
     }

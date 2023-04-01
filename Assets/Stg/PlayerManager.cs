@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,23 +18,47 @@ public class PlayerManager : MonoBehaviour
             players[i] = balootPlayer;
         }*/
     }
-    public void AssignPlayer(BalootPlayer player)
+    public void AssignPlayer(BalootPlayerClass player)
     {
 
-        if (CanPlayerJoinGame())
+                if (CanPlayerJoinGame())
         {
-        Debug.LogError("Assigning player");
+            
+            var obj = Instantiate(Resources.Load<GameObject>("Player"), Vector2.zero, Quaternion.identity);
+
+            Debug.LogError("Assigning player");
             for (int i = 0; i < 4; i++)
             {
                 if (players[i] == null)
                 {
-                    players[i] = player;
-                    GameUIManager._instance.nameTitles[i].text = $"Player {i + 1}";
+                    players[i] = obj.GetComponent<BalootPlayer>();
+                    /*foreach (var item in FindObjectsOfType<BalootPlayer>())
+                    {
+                        if (item.balootPlayerClass== player)
+                        {
+                            players[i] = item;
+                        }
+                    }*/
+                    players[i].balootPlayerClass = player;
+                    //players[i] = player;
+                    GameUIManager._instance.nameTitles[i].text = $"{player.playerName}";
                     Debug.LogError("Player Assigned");
+                    if (RoomManager._instance.balootPlayerClass.playerName == player.playerName)
+                    {
+                        GameUIManager._instance.nameTitles[i].color = Color.red;
+                        RoomManager._instance.indexOfPlayer = i;
+                    }
+                    if (i==3)
+                    {
+                        BalootGameManager._instance.GiveCardsToPlayer();
+                    }
+                    
                     return;
                 }
             }
         }
+        Debug.LogError("Space not found");
+        
     }
     public bool CanPlayerJoinGame()
     {

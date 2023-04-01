@@ -1,20 +1,22 @@
 using Photon.Pun;
 using Photon.Realtime;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.EventSystems;
+using Newtonsoft;
+using Newtonsoft.Json;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
     public static RoomManager _instance;
     public TextMeshProUGUI statusText;
     PhotonView photonViewComponent;
-    public BalootPlayer balootPlayer;
+    public BalootPlayerClass balootPlayerClass;
+    public int indexOfPlayer;
+    public string nameOfPlayer;
+    internal BalootPlayer recentlyJoinedPlayer;
+
     public bool DidTimeout { private set; get; }
     static readonly RoomOptions s_RoomOptions = new RoomOptions
     {
@@ -29,7 +31,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         _instance = this;
         Assert.AreEqual(1, FindObjectsOfType<RoomManager>().Length);
         photonViewComponent = GetComponent<PhotonView>();
-       
+        indexOfPlayer = -1;
         
 
 
@@ -174,7 +176,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Player Created");
         var obj = Instantiate(Resources.Load<GameObject>("Player"));
-            balootPlayer = obj.GetComponent<BalootPlayer>();
+            //balootPlayer = obj.GetComponent<BalootPlayer>();
         Debug.LogError("Instantiated Player");
         BalootPlayer[] players = FindObjectsOfType<BalootPlayer>();
         Debug.Log(players.Length);
@@ -183,7 +185,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
             if (item.GetComponent<PhotonView>().IsMine)
             {
-                balootPlayer = item;
+                //balootPlayer = item;
                 Debug.Log("Got Player");
                 break;
             }
@@ -210,10 +212,34 @@ public class RoomManager : MonoBehaviourPunCallbacks
             StopCoroutine(SynchroniseGame());
         }
 
-                photonViewComponent.RPC(nameof(InstantiatePlayer), RpcTarget.AllBufferedViaServer );
-                photonViewComponent.RPC(nameof(AssignPlayer), RpcTarget.AllBufferedViaServer );
-            
-        while(GameManager._instance.gameState == GameState.WaitingForOpponent)
+        //photonViewComponent.RPC(nameof(InstantiatePlayer), RpcTarget.AllBufferedViaServer );
+        /* var obj = PhotonNetwork.Instantiate("Player", Vector2.zero, Quaternion.identity);
+
+         while (obj == null)
+         {
+             yield return null;
+
+         }
+         recentlyJoinedPlayer = obj.GetComponent<BalootPlayer>();
+         balootPlayerClass = recentlyJoinedPlayer.balootPlayerClass;
+         nameOfPlayer = GameUIManager._instance.nameOfPlayer;*/
+        balootPlayerClass = new BalootPlayerClass() { playerName = GameUIManager._instance.nameOfPlayer };
+
+        var json = JsonConvert.SerializeObject(balootPlayerClass);
+        while (json == null)
+        {
+            yield return null;
+        }
+        indexOfPlayer = -1;
+                photonViewComponent.RPC(nameof(InstantiateAndAssignPlayer), RpcTarget.AllBufferedViaServer,new object[] {json } );
+        while(indexOfPlayer == -1 || balootPlayerClass==null )
+        {
+            yield return null;
+        }
+        //GameUIManager._instance.nameTitles[indexOfPlayer].color = Color.red;
+
+
+        while (GameManager._instance.gameState == GameState.WaitingForOpponent)
         {
             yield return null;
 
@@ -253,20 +279,33 @@ public class RoomManager : MonoBehaviourPunCallbacks
             yield return null;
         }
        
-        CeaseMoney();
+        
         
 
     }
+    [PunRPC]
+    private void InstantiateAndAssignPlayer(string balootPlayer)
+    {
+        var balootPlayerClass = JsonConvert.DeserializeObject<BalootPlayerClass>(balootPlayer);
+        
+        PlayerManager._instance.AssignPlayer(balootPlayerClass);
+
+        
+    }
+
     [PunRPC]
     void GiveCardsToPlayerPun()
     {
         BalootGameManager._instance.GiveCardsToPlayer();
     }
     [PunRPC]
-    private void AssignPlayer()
+    private void AssignPlayer(string balootPlayer)
     {
+        var balootPlayerClass = JsonConvert.DeserializeObject<BalootPlayerClass>(balootPlayer);
         Debug.Log(balootPlayer);
-        PlayerManager._instance.AssignPlayer(balootPlayer);
+        Debug.Log(nameOfPlayer);
+       PlayerManager._instance.AssignPlayer(balootPlayerClass);
+        
             }
 
     internal void SetGameData()

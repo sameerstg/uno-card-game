@@ -4,5 +4,15 @@ using UnityEngine;
 
 public class BalootPlayer : MonoBehaviour
 {
-    public List<CardClass> cards= new();   
+    public BalootPlayerClass balootPlayerClass;
+    private void Awake()
+    {
+        balootPlayerClass = new();
+    }
+}
+[System.Serializable]
+public class BalootPlayerClass
+{
+    public string playerName;
+    public List<CardClass> cards = new();
 }
