@@ -20,43 +20,109 @@ public class CardClass
         this.cardName = cardName;
     }
 }
-[System.Serializable]
+[Serializable]
 
 public enum House
 {
-    Spade,Heart,Diamond,Club
+    Spade, Heart, Diamond, Club
 }
-[System.Serializable]
+[Serializable]
 public enum CardName
 {
-    Ace,King,Queen,Jack,Ten,Nine,Eight,Seven
+    Ace, King, Queen, Jack, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten
 }
+public delegate void OnPlay();
+
 [System.Serializable]
-public class Baloot
+public class CardManager
 {
-    public CardClass[] totalCards;
-    public List<CardClass> cardsToBeCollected;
+    public List<PlayerClass> playerClasses = new(); 
+    public List<CardClass> totalCards;
+    public List<CardClass> remainingDeck;
     public List<CardClass> playedCards;
-    public House trump;
+    public OnPlay onPlayCard;
     public int turn;
-    public Baloot()
+    public CardManager()
     {
-        totalCards = new CardClass[32];
-        for (int i = 0; i < totalCards.Length; i++)
+        totalCards = new();
+        foreach (var house in Enum.GetNames(typeof(House)))
         {
-            foreach (var house in Enum.GetNames(typeof(House)))
+            foreach (var cardName in Enum.GetNames(typeof(CardName)))
             {
-                foreach (var cardName in Enum.GetNames(typeof(CardName)))
-                {
-                    totalCards[i] = new(Enum.Parse<House>(house), Enum.Parse<CardName>(cardName));
-                    i++;
-                    continue;
-                }
+                totalCards.Add (new(Enum.Parse<House>(house), Enum.Parse<CardName>(cardName)));
             }
         }
-        cardsToBeCollected = new();
-        cardsToBeCollected = totalCards.ToList();
-        playedCards = new();
+        remainingDeck = totalCards.ToList();
+       
     }
+    public List<CardClass>[] GetCardsForPlayers(int playerCount)
+    {
+        List<CardClass>[] playersCards =    new List<CardClass>[playerCount];
+        for (int j = 0; j < playerCount; j++)
+        {
+            for (int i = 0; i < 7; i++)
+            {
+                if (remainingDeck.Count <=0)
+                {
+                    return null;
+                }
+                var randomCardFromRemaining = remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)];
+                playersCards[j].Add(randomCardFromRemaining);
+                remainingDeck.Remove(randomCardFromRemaining);
 
+            }
+        }
+        return playersCards;
+
+    }
+    public bool StartGame(List<PlayerClass> players)
+    {
+        if (players == null|| players.Count == 0)
+        {
+            return false;
+        }
+        List<int> numbers = new();
+        for (int i = 0; i < players.Count; i++)
+        {
+            numbers.Add(i);
+        }
+
+        playedCards = new();
+
+        
+        var playersCards = GetCardsForPlayers(players.Count);
+        for (int i = 0; i < playersCards.Length; i++)
+        {
+            foreach (var item in playersCards[i])
+            {
+                players[i].cards.Add(item);
+            }
+            int s = numbers[UnityEngine.Random.Range(0, numbers.Count)];
+            players[i].turnNumber = s;
+            numbers.Remove(s);
+        }
+        if (remainingDeck.Count <=0)
+        {
+            return false;
+        }
+        var luckyCard = remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)];
+        playedCards.Add(luckyCard);
+        remainingDeck.Remove(luckyCard);
+        return true;   
+    }
+    public bool CanPlay(CardClass card)
+    {
+        return card.cardName == CardName.Ace|| card.house == playedCards[^1].house || card.cardName == playedCards[^1].cardName;
+    }
+    public bool PlayCard(CardClass card,PlayerClass player)
+    {
+        if (CanPlay(card) && player.cards.Contains(card) && turn == player.turnNumber)
+        {
+            playedCards.Add(card);
+            player.cards.Remove(card);
+            onPlayCard();
+            return true;
+        }
+        else { return false; }
+    }
 }

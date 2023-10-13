@@ -1,9 +1,9 @@
 ﻿[System.Serializable]
 public class Turn
 {
-    public BalootPlayerClass player; public CardClass card;
+    public PlayerClass player; public CardClass card;
 
-    public Turn(BalootPlayerClass player, CardClass card)
+    public Turn(PlayerClass player, CardClass card)
     {
         this.player = player;
         this.card = card;

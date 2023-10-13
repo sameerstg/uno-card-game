@@ -12,7 +12,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public static RoomManager _instance;
     public TextMeshProUGUI statusText;
     PhotonView photonViewComponent;
-    public BalootPlayerClass balootPlayerClass;
+    public PlayerClass balootPlayerClass;
     public int indexOfPlayer;
     public string nameOfPlayer;
     internal BalootPlayer recentlyJoinedPlayer;
@@ -20,7 +20,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public bool DidTimeout { private set; get; }
     static readonly RoomOptions s_RoomOptions = new RoomOptions
     {
-        MaxPlayers = 4,
+        MaxPlayers = 2,
         EmptyRoomTtl = 5,
         PublishUserId = true,
 
@@ -190,7 +190,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
                 break;
             }
         }
-        if (players.Length == 4)
+        if (players.Length == 2)
         {
 
             Debug.LogError("Cards distributed");
@@ -212,7 +212,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
             StopCoroutine(SynchroniseGame());
         }
 
-              balootPlayerClass = new BalootPlayerClass() { playerName = GameUIManager._instance.nameOfPlayer };
+              balootPlayerClass = new PlayerClass() { playerName = GameUIManager._instance.nameOfPlayer };
 
         var json = JsonConvert.SerializeObject(balootPlayerClass);
         while (json == null)
@@ -273,7 +273,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void InstantiateAndAssignPlayer(string balootPlayer)
     {
-        var balootPlayerClass = JsonConvert.DeserializeObject<BalootPlayerClass>(balootPlayer);
+        var balootPlayerClass = JsonConvert.DeserializeObject<PlayerClass>(balootPlayer);
         
         PlayerManager._instance.AssignPlayer(balootPlayerClass);
 
@@ -283,12 +283,12 @@ public class RoomManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void GiveCardsToPlayerPun()
     {
-        BalootGameManager._instance.GiveCardsToPlayer();
+        BalootGameManager._instance.NewGame();
     }
     [PunRPC]
     private void AssignPlayer(string balootPlayer)
     {
-        var balootPlayerClass = JsonConvert.DeserializeObject<BalootPlayerClass>(balootPlayer);
+        var balootPlayerClass = JsonConvert.DeserializeObject<PlayerClass>(balootPlayer);
         Debug.Log(balootPlayer);
         Debug.Log(nameOfPlayer);
        PlayerManager._instance.AssignPlayer(balootPlayerClass);

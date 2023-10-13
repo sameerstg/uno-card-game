@@ -19,6 +19,7 @@ public class NameInput : MonoBehaviour
         {
             return;
         }
+        PlayerPrefs.SetString("username", text.text);
         roomManager.SetActive(true);
         
         GameUIManager._instance.slotParrent.gameObject.SetActive(true);

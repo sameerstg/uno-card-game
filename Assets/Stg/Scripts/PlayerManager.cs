@@ -11,14 +11,14 @@ public class PlayerManager : MonoBehaviour
     private void Awake()
     {
         _instance = this;
-        players = new BalootPlayer[4];
+        players = new BalootPlayer[2];
        /* for (int i = 0; i < 4; i++)
         {
             var balootPlayer = Instantiate(player).GetComponent<BalootPlayer>();
             players[i] = balootPlayer;
         }*/
     }
-    public void AssignPlayer(BalootPlayerClass player)
+    public void AssignPlayer(PlayerClass player)
     {
 
                 if (CanPlayerJoinGame())
@@ -52,7 +52,7 @@ public class PlayerManager : MonoBehaviour
                     }
                     if (i==3)
                     {
-                        BalootGameManager._instance.GiveCardsToPlayer();
+                        BalootGameManager._instance.NewGame();
                         
                     }
 
@@ -65,7 +65,7 @@ public class PlayerManager : MonoBehaviour
     }
     public bool CanPlayerJoinGame()
     {
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 2; i++)
         {
             if (players[i] == null)
             {

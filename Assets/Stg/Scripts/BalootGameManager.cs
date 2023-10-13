@@ -9,7 +9,7 @@ public class BalootGameManager : MonoBehaviour
 {
     public static BalootGameManager _instance;
     
-    public Baloot baloot;
+    public CardManager baloot;
     public PhotonView photonView;
     private void Awake()
     {
@@ -25,7 +25,16 @@ public class BalootGameManager : MonoBehaviour
             return;
         }
         baloot = new();
-        GiveCardsToPlayer();
+        List<PlayerClass> list = new List<PlayerClass>(); 
+        for (int i = 0; i < PlayerManager._instance.players.Length; i++)
+        {
+            list.Add(PlayerManager._instance.players[i].balootPlayerClass);
+        }
+        baloot.StartGame(list);
+        GameUIManager._instance.slots[baloot.turn].turn.SetActive(true);
+        GameUIManager._instance.RefereshCards();
+
+        //GiveCardsToPlayer();
     }
     public void GiveCardsToPlayer()
     {
@@ -33,18 +42,18 @@ public class BalootGameManager : MonoBehaviour
         for (int j = 0; j < PlayerManager._instance.players.Length; j++)
         {
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 7; i++)
             {
                 
-                Debug.Log(baloot.cardsToBeCollected.Count);
-                CardClass card = baloot.cardsToBeCollected[
-                    Random.Range(0, baloot.cardsToBeCollected.Count)
+                Debug.Log(baloot.remainingDeck.Count);
+                CardClass card = baloot.remainingDeck[
+                    Random.Range(0, baloot.remainingDeck.Count)
                     ];
                 GiveCardToPlayer(PlayerManager._instance.players[j].balootPlayerClass, card);
-               baloot.cardsToBeCollected.Remove(card);
-                if (baloot.cardsToBeCollected.Count == 0)
+               baloot.remainingDeck.Remove(card);
+                if (baloot.remainingDeck.Count == 38)
                 {
-                    GameUIManager._instance.slots[baloot.turn].turn.gameObject.SetActive(true);
+                    GameUIManager._instance.slots[baloot.turn].turn.SetActive(true);
 
                     GameUIManager._instance.RefereshCards();
                     return;
@@ -56,6 +65,7 @@ public class BalootGameManager : MonoBehaviour
         }
         
     }
+
     [PunRPC]
     public void PlayCardPun(/*string turn*/)
     {
@@ -79,7 +89,7 @@ public class BalootGameManager : MonoBehaviour
         PlayCardPun),RpcTarget.AllBufferedViaServer)/*JsonConvert.DeserializeObject<Turn>(turn)*/;
 
     }
-    void GiveCardToPlayer(BalootPlayerClass player, CardClass card)
+    void GiveCardToPlayer(PlayerClass player, CardClass card)
     {
         player.cards.Add(card);
     }
