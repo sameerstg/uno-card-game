@@ -28,7 +28,7 @@ public class PlayerManager : MonoBehaviour
 
           
             Debug.LogError("Assigning player");
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 2; i++)
             {
                 if (players[i] == null)
                 {
@@ -50,7 +50,7 @@ public class PlayerManager : MonoBehaviour
                         GameUIManager._instance.slots[i].nameTitle.color = Color.red;
                         RoomManager._instance.indexOfPlayer = i;
                     }
-                    if (i==3)
+                    if (i==1)
                     {
                         BalootGameManager._instance.NewGame();
                         

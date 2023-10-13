@@ -19,6 +19,6 @@ public class TurnPlayer : MonoBehaviour
         {
             return;
         }
-        BalootGameManager._instance.PlayCard() ;
+        BalootGameManager._instance.baloot.PlayCard();
     }
 }

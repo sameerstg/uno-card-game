@@ -55,9 +55,13 @@ public class CardManager
         remainingDeck = totalCards.ToList();
        
     }
-    public List<CardClass>[] GetCardsForPlayers(int playerCount)
+    public List<List<CardClass>> GetCardsForPlayers(int playerCount)
     {
-        List<CardClass>[] playersCards =    new List<CardClass>[playerCount];
+        List<List<CardClass>> playersCards = new() {} ;
+        for (int i = 0; i < playerCount; i++)
+        {
+            playersCards.Add(new());
+        }
         for (int j = 0; j < playerCount; j++)
         {
             for (int i = 0; i < 7; i++)
@@ -69,11 +73,9 @@ public class CardManager
                 var randomCardFromRemaining = remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)];
                 playersCards[j].Add(randomCardFromRemaining);
                 remainingDeck.Remove(randomCardFromRemaining);
-
             }
         }
         return playersCards;
-
     }
     public bool StartGame(List<PlayerClass> players)
     {
@@ -91,7 +93,7 @@ public class CardManager
 
         
         var playersCards = GetCardsForPlayers(players.Count);
-        for (int i = 0; i < playersCards.Length; i++)
+        for (int i = 0; i < playersCards.Count; i++)
         {
             foreach (var item in playersCards[i])
             {
@@ -108,6 +110,7 @@ public class CardManager
         var luckyCard = remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)];
         playedCards.Add(luckyCard);
         remainingDeck.Remove(luckyCard);
+        playerClasses = players;
         return true;   
     }
     public bool CanPlay(CardClass card)
@@ -125,4 +128,24 @@ public class CardManager
         }
         else { return false; }
     }
+    public bool PlayCard(CardClass card)
+    {
+        if (CanPlay(card) )
+        {
+            PlayerClass player = playerClasses.Find(x => x.cards.Contains(card));
+            playedCards.Add(card);
+            player.cards.Remove(card);
+            onPlayCard();
+            return true;
+        }
+        else { return false; }
+    }
+    public bool PlayCard()
+    {
+                   PlayerClass player = playerClasses.Find(x => x.turnNumber == turn);
+        playedCards.Add(player.cards[0]);
+            player.cards.Remove(player.cards[0]);
+        GameUIManager._instance.RefereshCards();
+        return true;
+            }
 }

@@ -20,7 +20,7 @@ public class GameUIManager : MonoBehaviour
     }
     public void RefereshCards()
     {
-        for (int i = 0; i < slots.Length; i++)
+        for (int i = 0; i < BalootGameManager._instance.baloot.playerClasses.Count; i++)
         {
             foreach (var item in slots[i].cards)
             {
@@ -34,15 +34,13 @@ public class GameUIManager : MonoBehaviour
                 
 
                 Texture2D texture = Instantiate
-                    (Resources.Load<Texture2D>(($"Cards\\{PlayerManager._instance.players[i].balootPlayerClass.cards[k].house}\\"
-                    + $"{PlayerManager._instance.players[i].balootPlayerClass.cards[k].cardName}")));
+                    (Resources.Load<Texture2D>(($"Cards\\{House.Spade}\\"
+                    + $"{CardName.Ace}")));
                 Debug.Log(texture);
                 GameObject card = Instantiate(cardPrefab, slots[i].cardParent.transform);
                 slots[i].cards.Add(card);
                                var cardClass = card.AddComponent<BalootCard>();
                 cardClass.cardClass = new(PlayerManager._instance.players[i].balootPlayerClass.cards[k].house, PlayerManager._instance.players[i].balootPlayerClass.cards[k].cardName);
-
-
                 cardClass.GetComponent<RawImage>().texture = texture;
                 
                           }
