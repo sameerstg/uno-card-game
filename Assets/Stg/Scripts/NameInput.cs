@@ -23,6 +23,7 @@ public class NameInput : MonoBehaviour
         roomManager.SetActive(true);
         
         GameUIManager._instance.slotParrent.gameObject.SetActive(true);
+        GameUIManager._instance.playedCardSlot.gameObject.SetActive(true);
         gameObject.SetActive(false);
         GameUIManager._instance.nameOfPlayer = text.text;
     }

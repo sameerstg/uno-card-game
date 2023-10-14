@@ -3,10 +3,45 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BalootCard : MonoBehaviour
 {
     public CardClass cardClass;
+    public bool selected = false;
+
+    private void Start()
+    {
+
+        GetComponent<Button>().onClick.AddListener(() => SelectCard());
+    }
+
+    private void SelectCard()
+    {
+        if (BalootGameManager._instance.cardManager.turn != RoomManager._instance.indexOfPlayer)
+        {
+            return;
+        }
+        if (BalootGameManager._instance.cardManager.turn != cardClass.player)
+            return;
+
+        for(int i = 0; i < transform.parent.childCount; i++)
+        {
+            transform.parent.GetChild(i).GetComponent<BalootCard>().selected = false;
+            transform.parent.GetChild(i).localScale = Vector3.one;
+        }
+
+        if (!selected)
+        {
+            selected = true;
+            transform.localScale = Vector3.one * 1.2f;
+        }
+        else
+        {
+            selected = false;
+            transform.localScale = Vector3.one;
+        }
+    }
 }
 [System.Serializable]
 public class CardClass
@@ -14,6 +49,7 @@ public class CardClass
     public House house;
     public CardName cardName;
     public int points;
+    public int player;
     public CardClass(House house, CardName cardName)
     {
         this.house = house;
@@ -142,10 +178,28 @@ public class CardManager
     }
     public bool PlayCard()
     {
-                   PlayerClass player = playerClasses.Find(x => x.turnNumber == turn);
-        playedCards.Add(player.cards[0]);
-            player.cards.Remove(player.cards[0]);
-        GameUIManager._instance.RefereshCards();
-        return true;
+        PlayerClass player = playerClasses.Find(x => x.turnNumber == turn);
+        GameObject selectedCard = null;
+        for(int i = 0; i < GameUIManager._instance.slots[turn].cards.Count; i++)
+        {
+            if(GameUIManager._instance.slots[turn].cards[i].GetComponent<BalootCard>().selected)
+            {
+                selectedCard = GameUIManager._instance.slots[turn].cards[i];
+                break;
             }
+        }
+        if(selectedCard)
+        {
+            if(CanPlay(selectedCard.GetComponent<BalootCard>().cardClass))
+            {
+                playedCards.Add(selectedCard.GetComponent<BalootCard>().cardClass);
+                player.cards.Remove(selectedCard.GetComponent<BalootCard>().cardClass);
+                //GameUIManager._instance.RefereshCards();
+                BalootGameManager._instance.PlayCard();
+                return true;
+            }
+            else { return false; }
+        }
+        else { return false; }
+    }
 }

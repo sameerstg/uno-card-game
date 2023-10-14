@@ -116,203 +116,427 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e706ff51df2c4ed4b9567894637dade1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baloot:
+  cardManager:
+    playerClasses: []
     totalCards:
     - house: 0
       cardName: 0
       points: 0
+      player: 0
     - house: 0
       cardName: 1
       points: 0
+      player: 0
     - house: 0
       cardName: 2
       points: 0
+      player: 0
     - house: 0
       cardName: 3
       points: 0
+      player: 0
     - house: 0
       cardName: 4
       points: 0
+      player: 0
     - house: 0
       cardName: 5
       points: 0
+      player: 0
     - house: 0
       cardName: 6
       points: 0
+      player: 0
     - house: 0
       cardName: 7
       points: 0
+      player: 0
+    - house: 0
+      cardName: 8
+      points: 0
+      player: 0
+    - house: 0
+      cardName: 9
+      points: 0
+      player: 0
+    - house: 0
+      cardName: 10
+      points: 0
+      player: 0
+    - house: 0
+      cardName: 11
+      points: 0
+      player: 0
+    - house: 0
+      cardName: 12
+      points: 0
+      player: 0
     - house: 1
       cardName: 0
       points: 0
+      player: 0
     - house: 1
       cardName: 1
       points: 0
+      player: 0
     - house: 1
       cardName: 2
       points: 0
+      player: 0
     - house: 1
       cardName: 3
       points: 0
+      player: 0
     - house: 1
       cardName: 4
       points: 0
+      player: 0
     - house: 1
       cardName: 5
       points: 0
+      player: 0
     - house: 1
       cardName: 6
       points: 0
+      player: 0
     - house: 1
       cardName: 7
       points: 0
+      player: 0
+    - house: 1
+      cardName: 8
+      points: 0
+      player: 0
+    - house: 1
+      cardName: 9
+      points: 0
+      player: 0
+    - house: 1
+      cardName: 10
+      points: 0
+      player: 0
+    - house: 1
+      cardName: 11
+      points: 0
+      player: 0
+    - house: 1
+      cardName: 12
+      points: 0
+      player: 0
     - house: 2
       cardName: 0
       points: 0
+      player: 0
     - house: 2
       cardName: 1
       points: 0
+      player: 0
     - house: 2
       cardName: 2
       points: 0
+      player: 0
     - house: 2
       cardName: 3
       points: 0
+      player: 0
     - house: 2
       cardName: 4
       points: 0
+      player: 0
     - house: 2
       cardName: 5
       points: 0
+      player: 0
     - house: 2
       cardName: 6
       points: 0
+      player: 0
     - house: 2
       cardName: 7
       points: 0
+      player: 0
+    - house: 2
+      cardName: 8
+      points: 0
+      player: 0
+    - house: 2
+      cardName: 9
+      points: 0
+      player: 0
+    - house: 2
+      cardName: 10
+      points: 0
+      player: 0
+    - house: 2
+      cardName: 11
+      points: 0
+      player: 0
+    - house: 2
+      cardName: 12
+      points: 0
+      player: 0
     - house: 3
       cardName: 0
       points: 0
+      player: 0
     - house: 3
       cardName: 1
       points: 0
+      player: 0
     - house: 3
       cardName: 2
       points: 0
+      player: 0
     - house: 3
       cardName: 3
       points: 0
+      player: 0
     - house: 3
       cardName: 4
       points: 0
+      player: 0
     - house: 3
       cardName: 5
       points: 0
+      player: 0
     - house: 3
       cardName: 6
       points: 0
+      player: 0
     - house: 3
       cardName: 7
       points: 0
-    cardsToBeCollected:
+      player: 0
+    - house: 3
+      cardName: 8
+      points: 0
+      player: 0
+    - house: 3
+      cardName: 9
+      points: 0
+      player: 0
+    - house: 3
+      cardName: 10
+      points: 0
+      player: 0
+    - house: 3
+      cardName: 11
+      points: 0
+      player: 0
+    - house: 3
+      cardName: 12
+      points: 0
+      player: 0
+    remainingDeck:
     - house: 0
       cardName: 0
       points: 0
+      player: 0
     - house: 0
       cardName: 1
       points: 0
+      player: 0
     - house: 0
       cardName: 2
       points: 0
+      player: 0
     - house: 0
       cardName: 3
       points: 0
+      player: 0
     - house: 0
       cardName: 4
       points: 0
+      player: 0
     - house: 0
       cardName: 5
       points: 0
+      player: 0
     - house: 0
       cardName: 6
       points: 0
+      player: 0
     - house: 0
       cardName: 7
       points: 0
+      player: 0
+    - house: 0
+      cardName: 8
+      points: 0
+      player: 0
+    - house: 0
+      cardName: 9
+      points: 0
+      player: 0
+    - house: 0
+      cardName: 10
+      points: 0
+      player: 0
+    - house: 0
+      cardName: 11
+      points: 0
+      player: 0
+    - house: 0
+      cardName: 12
+      points: 0
+      player: 0
     - house: 1
       cardName: 0
       points: 0
+      player: 0
     - house: 1
       cardName: 1
       points: 0
+      player: 0
     - house: 1
       cardName: 2
       points: 0
+      player: 0
     - house: 1
       cardName: 3
       points: 0
+      player: 0
     - house: 1
       cardName: 4
       points: 0
+      player: 0
     - house: 1
       cardName: 5
       points: 0
+      player: 0
     - house: 1
       cardName: 6
       points: 0
+      player: 0
     - house: 1
       cardName: 7
       points: 0
+      player: 0
+    - house: 1
+      cardName: 8
+      points: 0
+      player: 0
+    - house: 1
+      cardName: 9
+      points: 0
+      player: 0
+    - house: 1
+      cardName: 10
+      points: 0
+      player: 0
+    - house: 1
+      cardName: 11
+      points: 0
+      player: 0
+    - house: 1
+      cardName: 12
+      points: 0
+      player: 0
     - house: 2
       cardName: 0
       points: 0
+      player: 0
     - house: 2
       cardName: 1
       points: 0
+      player: 0
     - house: 2
       cardName: 2
       points: 0
+      player: 0
     - house: 2
       cardName: 3
       points: 0
+      player: 0
     - house: 2
       cardName: 4
       points: 0
+      player: 0
     - house: 2
       cardName: 5
       points: 0
+      player: 0
     - house: 2
       cardName: 6
       points: 0
+      player: 0
     - house: 2
       cardName: 7
       points: 0
+      player: 0
+    - house: 2
+      cardName: 8
+      points: 0
+      player: 0
+    - house: 2
+      cardName: 9
+      points: 0
+      player: 0
+    - house: 2
+      cardName: 10
+      points: 0
+      player: 0
+    - house: 2
+      cardName: 11
+      points: 0
+      player: 0
+    - house: 2
+      cardName: 12
+      points: 0
+      player: 0
     - house: 3
       cardName: 0
       points: 0
+      player: 0
     - house: 3
       cardName: 1
       points: 0
+      player: 0
     - house: 3
       cardName: 2
       points: 0
+      player: 0
     - house: 3
       cardName: 3
       points: 0
+      player: 0
     - house: 3
       cardName: 4
       points: 0
+      player: 0
     - house: 3
       cardName: 5
       points: 0
+      player: 0
     - house: 3
       cardName: 6
       points: 0
+      player: 0
     - house: 3
       cardName: 7
       points: 0
+      player: 0
+    - house: 3
+      cardName: 8
+      points: 0
+      player: 0
+    - house: 3
+      cardName: 9
+      points: 0
+      player: 0
+    - house: 3
+      cardName: 10
+      points: 0
+      player: 0
+    - house: 3
+      cardName: 11
+      points: 0
+      player: 0
+    - house: 3
+      cardName: 12
+      points: 0
+      player: 0
     playedCards: []
-    trump: 0
     turn: 0
   photonView: {fileID: 0}
 --- !u!114 &1224409634095140600

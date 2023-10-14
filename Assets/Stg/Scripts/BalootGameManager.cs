@@ -9,7 +9,7 @@ public class BalootGameManager : MonoBehaviour
 {
     public static BalootGameManager _instance;
     
-    public CardManager baloot;
+    public CardManager cardManager;
     public PhotonView photonView;
     private void Awake()
     {
@@ -24,14 +24,14 @@ public class BalootGameManager : MonoBehaviour
         {
             return;
         }
-        baloot = new();
+        cardManager = new();
         List<PlayerClass> list = new List<PlayerClass>(); 
         for (int i = 0; i < PlayerManager._instance.players.Length; i++)
         {
             list.Add(PlayerManager._instance.players[i].balootPlayerClass);
         }
-        baloot.StartGame(list);
-        GameUIManager._instance.slots[baloot.turn].turn.SetActive(true);
+        cardManager.StartGame(list);
+        GameUIManager._instance.slots[cardManager.turn].turn.SetActive(true);
         GameUIManager._instance.RefereshCards();
 
         //GiveCardsToPlayer();
@@ -45,15 +45,15 @@ public class BalootGameManager : MonoBehaviour
             for (int i = 0; i < 7; i++)
             {
                 
-                Debug.Log(baloot.remainingDeck.Count);
-                CardClass card = baloot.remainingDeck[
-                    Random.Range(0, baloot.remainingDeck.Count)
+                Debug.Log(cardManager.remainingDeck.Count);
+                CardClass card = cardManager.remainingDeck[
+                    Random.Range(0, cardManager.remainingDeck.Count)
                     ];
                 GiveCardToPlayer(PlayerManager._instance.players[j].balootPlayerClass, card);
-               baloot.remainingDeck.Remove(card);
-                if (baloot.remainingDeck.Count == 38)
+               cardManager.remainingDeck.Remove(card);
+                if (cardManager.remainingDeck.Count == 38)
                 {
-                    GameUIManager._instance.slots[baloot.turn].turn.SetActive(true);
+                    GameUIManager._instance.slots[cardManager.turn].turn.SetActive(true);
 
                     GameUIManager._instance.RefereshCards();
                     return;
@@ -76,9 +76,9 @@ public class BalootGameManager : MonoBehaviour
         ChangeTurn();
         GameUIManager._instance.RefereshCards();*/
 
-        baloot.playedCards.Add(PlayerManager._instance.players[baloot.turn].balootPlayerClass.cards[0]);
-        PlayerManager._instance.players[baloot.turn].balootPlayerClass.cards.
-            Remove(PlayerManager._instance.players[baloot.turn].balootPlayerClass.cards[0]);
+        //cardManager.playedCards.Add(PlayerManager._instance.players[cardManager.turn].balootPlayerClass.cards[0]);
+        //PlayerManager._instance.players[cardManager.turn].balootPlayerClass.cards.
+        //    Remove(PlayerManager._instance.players[cardManager.turn].balootPlayerClass.cards[0]);
 
         ChangeTurn();
         GameUIManager._instance.RefereshCards();
@@ -95,13 +95,13 @@ public class BalootGameManager : MonoBehaviour
     }
     void ChangeTurn()
     {
-        GameUIManager._instance.slots[baloot.turn].turn.gameObject.SetActive(false);
-        baloot.turn++;
-        if (baloot.turn>3)
+        GameUIManager._instance.slots[cardManager.turn].turn.gameObject.SetActive(false);
+        cardManager.turn++;
+        if (cardManager.turn >= PlayerManager._instance.players.Length)
         {
-            baloot.turn = 0;
+            cardManager.turn = 0;
         }
-        GameUIManager._instance.slots[baloot.turn].turn.gameObject.SetActive(true);
+        GameUIManager._instance.slots[cardManager.turn].turn.gameObject.SetActive(true);
 
     }
 

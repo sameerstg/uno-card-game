@@ -15,10 +15,10 @@ public class TurnPlayer : MonoBehaviour
 
     private void PlayCardTurn()
     {
-        if (BalootGameManager._instance.baloot.turn != RoomManager._instance.indexOfPlayer)
+        if (BalootGameManager._instance.cardManager.turn != RoomManager._instance.indexOfPlayer)
         {
             return;
         }
-        BalootGameManager._instance.baloot.PlayCard();
+        BalootGameManager._instance.cardManager.PlayCard();
     }
 }
