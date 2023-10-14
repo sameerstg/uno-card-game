@@ -15,10 +15,13 @@ public class TurnPlayer : MonoBehaviour
 
     private void PlayCardTurn()
     {
+        Debug.LogError("s");
         if (BalootGameManager._instance.cardManager.turn != RoomManager._instance.indexOfPlayer)
         {
             return;
         }
-        BalootGameManager._instance.cardManager.PlayCard();
+
+        var played = BalootGameManager._instance.cardManager.PlayCard();
+        Debug.LogError(played);
     }
 }

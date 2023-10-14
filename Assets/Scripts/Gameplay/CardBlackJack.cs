@@ -27,6 +27,6 @@ public class CardBlackJack : MonoBehaviour
         {
             transform.localScale = Vector3.one;
         }
-        BalootGameManager._instance.cardManager.PlayCard();
+        //BalootGameManager._instance.cardManager.selectedCard = ;
     }
 }

@@ -20,21 +20,33 @@ public class BalootGameManager : MonoBehaviour
     }
     public void NewGame()
     {
-        if (PlayerManager._instance.CanPlayerJoinGame())
+        //if (PlayerManager._instance.CanPlayerJoinGame())
+        //{
+        //    return;
+        //}
+        if (PhotonNetwork.IsMasterClient)
         {
-            return;
+            cardManager = new();
+            List<PlayerClass> list = new List<PlayerClass>();
+            for (int i = 0; i < PlayerManager._instance.players.Length; i++)
+            {
+                list.Add(PlayerManager._instance.players[i].balootPlayerClass);
+            }
+            this.cardManager.StartGame(list);
+            photonView.RPC(nameof(SyncNewGame), RpcTarget.All, new object[] { JsonConvert.SerializeObject( list ), JsonConvert.SerializeObject(cardManager) });
         }
-        cardManager = new();
-        List<PlayerClass> list = new List<PlayerClass>(); 
-        for (int i = 0; i < PlayerManager._instance.players.Length; i++)
-        {
-            list.Add(PlayerManager._instance.players[i].balootPlayerClass);
-        }
-        cardManager.StartGame(list);
-        GameUIManager._instance.slots[cardManager.turn].turn.SetActive(true);
-        GameUIManager._instance.RefereshCards();
+        
 
         //GiveCardsToPlayer();
+    }
+    [PunRPC]
+    public void SyncNewGame(string players ,string cardManagerParam )
+    {
+        cardManager = JsonConvert.DeserializeObject<CardManager>(cardManagerParam);
+        RoomManager._instance.indexOfPlayer = cardManager.playerClasses.Find(x => x.photonId == PhotonNetwork.LocalPlayer.UserId).turnNumber;
+        RoomManager._instance.RealIndex = cardManager.playerClasses.IndexOf(cardManager.playerClasses.Find(x => x.photonId == PhotonNetwork.LocalPlayer.UserId));
+        GameUIManager._instance.RefereshCards();
+        ShowTurn();
     }
     public void GiveCardsToPlayer()
     {
@@ -67,39 +79,34 @@ public class BalootGameManager : MonoBehaviour
     }
 
     [PunRPC]
-    public void PlayCardPun(/*string turn*/)
+    public void PlayCardPun(string cardManager)
     {
 
-        /*turn.player.cards.Remove(turn.card);
-                baloot.playedCards.Add(turn.card);
-
-        ChangeTurn();
-        GameUIManager._instance.RefereshCards();*/
-
-        //cardManager.playedCards.Add(PlayerManager._instance.players[cardManager.turn].balootPlayerClass.cards[0]);
-        //PlayerManager._instance.players[cardManager.turn].balootPlayerClass.cards.
-        //    Remove(PlayerManager._instance.players[cardManager.turn].balootPlayerClass.cards[0]);
-
-        ChangeTurn();
+       
+        this.cardManager = JsonConvert.DeserializeObject<CardManager>(cardManager);
+        ShowTurn();
+        //GameUIManager._instance.slots[this.cardManager.turn].turn.SetActive(true);
         GameUIManager._instance.RefereshCards();
-    }
-    public void PlayCard(/*Turn turn*/)
-    {
-        photonView.RPC(nameof(
-        PlayCardPun),RpcTarget.AllBufferedViaServer)/*JsonConvert.DeserializeObject<Turn>(turn)*/;
 
+    }
+    public void PlayCard()
+    {
+        photonView.RPC(nameof(PlayCardPun),RpcTarget.AllBufferedViaServer,JsonConvert.SerializeObject(cardManager));
     }
     void GiveCardToPlayer(PlayerClass player, CardClass card)
     {
         player.cards.Add(card);
     }
-    void ChangeTurn()
+    void ShowTurn()
     {
-        GameUIManager._instance.slots[cardManager.turn].turn.gameObject.SetActive(false);
-        cardManager.turn++;
-        if (cardManager.turn >= PlayerManager._instance.players.Length)
+        foreach (var item in GameUIManager._instance.slots)
         {
-            cardManager.turn = 0;
+            item.turn.gameObject.SetActive(false);
+        }
+
+        if (cardManager.turn != RoomManager._instance.indexOfPlayer)
+        {
+            return;
         }
         GameUIManager._instance.slots[cardManager.turn].turn.gameObject.SetActive(true);
 

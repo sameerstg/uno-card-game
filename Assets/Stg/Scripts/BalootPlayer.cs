@@ -14,6 +14,7 @@ public class BalootPlayer : MonoBehaviour
 public class PlayerClass
 {
     public string playerName;
+    public string photonId;
     public List<CardClass> cards = new();
     public int turnNumber;
     public PlayerClass()

@@ -1,3 +1,4 @@
+using SWNetwork;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,10 +23,11 @@ public class BalootCard : MonoBehaviour
         {
             return;
         }
-        if (BalootGameManager._instance.cardManager.turn != cardClass.player)
-            return;
 
-        for(int i = 0; i < transform.parent.childCount; i++)
+        //if (BalootGameManager._instance.cardManager.playerClasses.Find(x=>x.turnNumber == RoomManager._instance.indexOfPlayer).cards.Exists(x=>x.cardName == cardClass.cardName && x.house == cardClass.house))
+        //    return;
+
+        for (int i = 0; i < transform.parent.childCount; i++)
         {
             transform.parent.GetChild(i).GetComponent<BalootCard>().selected = false;
             transform.parent.GetChild(i).localScale = Vector3.one;
@@ -35,10 +37,13 @@ public class BalootCard : MonoBehaviour
         {
             selected = true;
             transform.localScale = Vector3.one * 1.2f;
+            BalootGameManager._instance.cardManager.selectedCard = cardClass;
         }
         else
         {
             selected = false;
+            BalootGameManager._instance.cardManager.selectedCard = null;
+
             transform.localScale = Vector3.one;
         }
     }
@@ -78,6 +83,8 @@ public class CardManager
     public List<CardClass> playedCards;
     public OnPlay onPlayCard;
     public int turn;
+    public CardClass selectedCard;
+
     public CardManager()
     {
         totalCards = new();
@@ -153,47 +160,43 @@ public class CardManager
     {
         return card.cardName == CardName.Ace|| card.house == playedCards[^1].house || card.cardName == playedCards[^1].cardName;
     }
-    public bool PlayCard(CardClass card,PlayerClass player)
-    {
-        if (CanPlay(card) && player.cards.Contains(card) && turn == player.turnNumber)
-        {
-            playedCards.Add(card);
-            player.cards.Remove(card);
-            onPlayCard();
-            return true;
-        }
-        else { return false; }
-    }
-    public bool PlayCard(CardClass card)
-    {
-        if (CanPlay(card) )
-        {
-            PlayerClass player = playerClasses.Find(x => x.cards.Contains(card));
-            playedCards.Add(card);
-            player.cards.Remove(card);
-            onPlayCard();
-            return true;
-        }
-        else { return false; }
-    }
+    //public bool PlayCard(CardClass card,PlayerClass player)
+    //{
+    //    if (CanPlay(card) && player.cards.Contains(card) && turn == player.turnNumber)
+    //    {
+    //        playedCards.Add(card);
+    //        player.cards.Remove(card);
+    //        //onPlayCard();
+    //        return true;
+    //    }
+    //    else { return false; }
+    //}
+    //public bool PlayCard(CardClass card)
+    //{
+    //    if (CanPlay(card) )
+    //    {
+    //        PlayerClass player = playerClasses.Find(x => x.cards.Contains(card));
+    //        playedCards.Add(card);
+    //        player.cards.Remove(card);
+    //        onPlayCard();
+    //        return true;
+    //    }
+    //    else { return false; }
+    //}
     public bool PlayCard()
     {
-        PlayerClass player = playerClasses.Find(x => x.turnNumber == turn);
-        GameObject selectedCard = null;
-        for(int i = 0; i < GameUIManager._instance.slots[turn].cards.Count; i++)
+        //int indexOfPlayer = playerClasses.IndexOf( playerClasses.Find(x => x.turnNumber == turn));
+        //Debug.LogError(indexOfPlayer);
+        if (selectedCard != null)
         {
-            if(GameUIManager._instance.slots[turn].cards[i].GetComponent<BalootCard>().selected)
+            var canPlay = CanPlay(selectedCard);
+            Debug.LogError(canPlay);
+            if (canPlay)
             {
-                selectedCard = GameUIManager._instance.slots[turn].cards[i];
-                break;
-            }
-        }
-        if(selectedCard)
-        {
-            if(CanPlay(selectedCard.GetComponent<BalootCard>().cardClass))
-            {
-                playedCards.Add(selectedCard.GetComponent<BalootCard>().cardClass);
-                player.cards.Remove(selectedCard.GetComponent<BalootCard>().cardClass);
+                bool s = playerClasses[RoomManager._instance.RealIndex].cards.Remove(playerClasses[RoomManager._instance.RealIndex].cards.Find(x => selectedCard.house == x.house && selectedCard.cardName == x.cardName));
+                Debug.LogError(s); 
+                playedCards.Add(selectedCard);
+                ChangeTurn();
                 //GameUIManager._instance.RefereshCards();
                 BalootGameManager._instance.PlayCard();
                 return true;
@@ -202,4 +205,12 @@ public class CardManager
         }
         else { return false; }
     }
-}
+    void ChangeTurn()
+    {
+        turn++;
+        if (turn >= PlayerManager._instance.players.Length)
+        {
+            turn = 0;
+        }
+    }
+   }

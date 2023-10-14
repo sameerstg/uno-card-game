@@ -7,26 +7,26 @@ public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager _instance;
     public GameObject player;
-    public BalootPlayer[] players ;
+    public BalootPlayer[] players;
     private void Awake()
     {
         _instance = this;
         players = new BalootPlayer[2];
-       /* for (int i = 0; i < 4; i++)
-        {
-            var balootPlayer = Instantiate(player).GetComponent<BalootPlayer>();
-            players[i] = balootPlayer;
-        }*/
+        /* for (int i = 0; i < 4; i++)
+         {
+             var balootPlayer = Instantiate(player).GetComponent<BalootPlayer>();
+             players[i] = balootPlayer;
+         }*/
     }
     public void AssignPlayer(PlayerClass player)
     {
 
-                if (CanPlayerJoinGame())
+        if (CanPlayerJoinGame())
         {
             var obj = Instantiate(Resources.Load<GameObject>("Player"), Vector2.zero, Quaternion.identity);
 
 
-          
+
             Debug.LogError("Assigning player");
             for (int i = 0; i < 2; i++)
             {
@@ -50,10 +50,10 @@ public class PlayerManager : MonoBehaviour
                         GameUIManager._instance.slots[i].nameTitle.color = Color.red;
                         RoomManager._instance.indexOfPlayer = i;
                     }
-                    if (i==1)
+                    if (i == 1)
                     {
                         BalootGameManager._instance.NewGame();
-                        
+
                     }
 
                     return;
@@ -61,7 +61,7 @@ public class PlayerManager : MonoBehaviour
             }
         }
         Debug.LogError("Space not found");
-        
+
     }
     public bool CanPlayerJoinGame()
     {

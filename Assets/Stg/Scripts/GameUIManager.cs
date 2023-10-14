@@ -15,9 +15,6 @@ public class GameUIManager : MonoBehaviour
     private void Awake()
     {
         _instance = this;
-        
-       
-
     }
     public void RefereshCards()
     {
@@ -28,23 +25,24 @@ public class GameUIManager : MonoBehaviour
                 Destroy(item);
             }
             slots[i].cards.Clear();
-            for (int k = 0; k < PlayerManager._instance.players[i].balootPlayerClass.cards.Count; k++)
+            slots[i].nameTitle.text = BalootGameManager._instance.cardManager.playerClasses[i].playerName;
+            for (int k = 0; k < BalootGameManager._instance.cardManager.playerClasses[i].cards.Count; k++)
             {
-                Debug.Log(PlayerManager._instance.players[i].balootPlayerClass.cards[k].house);
-                Debug.Log(PlayerManager._instance.players[i].balootPlayerClass.cards[k].cardName);
+                //Debug.Log(PlayerManager._instance.players[i].balootPlayerClass.cards[k].house);
+                //Debug.Log(PlayerManager._instance.players[i].balootPlayerClass.cards[k].cardName);
 
 
                 //Texture2D texture = Instantiate
                 //    (Resources.Load<Texture2D>(($"Cards\\{House.Spade}\\"
                 //    + $"{CardName.Ace}")));
                 Texture2D texture = Instantiate
-                    (Resources.Load<Texture2D>(($"Cards\\" + PlayerManager._instance.players[i].balootPlayerClass.cards[k].house + "\\"
-                    + $"{PlayerManager._instance.players[i].balootPlayerClass.cards[k].cardName}")));
-                Debug.Log(texture);
+                    (Resources.Load<Texture2D>(($"Cards\\" + BalootGameManager._instance.cardManager.playerClasses[i].cards[k].house + "\\"
+                    + $"{BalootGameManager._instance.cardManager.playerClasses[i].cards[k].cardName}")));
+                //Debug.Log(texture);
                 GameObject card = Instantiate(cardPrefab, slots[i].cardParent.transform);
                 slots[i].cards.Add(card);
                                var cardClass = card.AddComponent<BalootCard>();
-                cardClass.cardClass = new(PlayerManager._instance.players[i].balootPlayerClass.cards[k].house, PlayerManager._instance.players[i].balootPlayerClass.cards[k].cardName);
+                cardClass.cardClass = new(BalootGameManager._instance.cardManager.playerClasses[i].cards[k].house, BalootGameManager._instance.cardManager.playerClasses[i].cards[k].cardName);
                 cardClass.GetComponent<RawImage>().texture = texture;
                 cardClass.cardClass.player = i;
                 

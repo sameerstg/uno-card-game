@@ -16,6 +16,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public int indexOfPlayer;
     public string nameOfPlayer;
     internal BalootPlayer recentlyJoinedPlayer;
+    public int RealIndex ;
 
     public bool DidTimeout { private set; get; }
     static readonly RoomOptions s_RoomOptions = new RoomOptions
@@ -28,6 +29,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     void Awake()
     {
+        RealIndex = -1;
         _instance = this;
         Assert.AreEqual(1, FindObjectsOfType<RoomManager>().Length);
         photonViewComponent = GetComponent<PhotonView>();
@@ -212,7 +214,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
             StopCoroutine(SynchroniseGame());
         }
 
-              balootPlayerClass = new PlayerClass() { playerName = GameUIManager._instance.nameOfPlayer };
+              balootPlayerClass = new PlayerClass() { playerName = GameUIManager._instance.nameOfPlayer ,photonId = PhotonNetwork.LocalPlayer.UserId};
 
         var json = JsonConvert.SerializeObject(balootPlayerClass);
         while (json == null)
@@ -285,15 +287,15 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         BalootGameManager._instance.NewGame();
     }
-    [PunRPC]
-    private void AssignPlayer(string balootPlayer)
-    {
-        var balootPlayerClass = JsonConvert.DeserializeObject<PlayerClass>(balootPlayer);
-        Debug.Log(balootPlayer);
-        Debug.Log(nameOfPlayer);
-       PlayerManager._instance.AssignPlayer(balootPlayerClass);
+    //[PunRPC]
+    //private void AssignPlayer(string balootPlayer)
+    //{
+    //    var balootPlayerClass = JsonConvert.DeserializeObject<PlayerClass>(balootPlayer);
+    //    Debug.Log(balootPlayer);
+    //    Debug.Log(nameOfPlayer);
+    //   PlayerManager._instance.AssignPlayer(balootPlayerClass);
         
-            }
+    //        }
 
     internal void SetGameData()
     {
