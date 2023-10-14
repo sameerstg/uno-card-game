@@ -199,11 +199,27 @@ public class CardManager
                 ChangeTurn();
                 //GameUIManager._instance.RefereshCards();
                 BalootGameManager._instance.PlayCard();
+                while (!CanPlay(playerClasses[RoomManager._instance.RealIndex]) && remainingDeck.Count>0)
+                {
+                    playerClasses[RoomManager._instance.RealIndex].cards.Add(remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)]);
+                }
                 return true;
             }
             else { return false; }
         }
         else { return false; }
+    }
+    public bool CanPlay(PlayerClass playerClass)
+    {
+
+        foreach (var item in playerClass.cards)
+        {
+            if (CanPlay(item))
+            {
+                return true;
+            }
+        }
+        return false;
     }
     void ChangeTurn()
     {
