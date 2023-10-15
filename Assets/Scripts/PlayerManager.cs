@@ -48,7 +48,7 @@ public class PlayerManager : MonoBehaviour
                     if (RoomManager._instance.balootPlayerClass.playerName == player.playerName)
                     {
                         GameUIManager._instance.slots[i].nameTitle.color = Color.red;
-                        RoomManager._instance.indexOfPlayer = i;
+                        RoomManager._instance.localPlayerTurn = i;
                     }
                     if (i == 1)
                     {

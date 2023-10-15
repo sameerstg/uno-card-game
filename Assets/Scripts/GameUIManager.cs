@@ -16,7 +16,7 @@ public class GameUIManager : MonoBehaviour
     {
         _instance = this;
     }
-    public void RefereshCards()
+    public void RefereshUi()
     {
         for (int i = 0; i < BalootGameManager._instance.cardManager.playerClasses.Count; i++)
         {
@@ -26,6 +26,10 @@ public class GameUIManager : MonoBehaviour
             }
             slots[i].cards.Clear();
             slots[i].nameTitle.text = BalootGameManager._instance.cardManager.playerClasses[i].playerName;
+            if (BalootGameManager._instance.cardManager.turn == BalootGameManager._instance.cardManager.playerClasses[i].turnNumber)
+            {
+                slots[i].nameTitle.text += $" Turn";
+            }
             for (int k = 0; k < BalootGameManager._instance.cardManager.playerClasses[i].cards.Count; k++)
             {
                 //Debug.Log(PlayerManager._instance.players[i].balootPlayerClass.cards[k].house);
@@ -50,6 +54,7 @@ public class GameUIManager : MonoBehaviour
         }
 
         RefreshPlayedCards();
+        ShowTurn();
     }
 
     public void RefreshPlayedCards()
@@ -75,5 +80,20 @@ public class GameUIManager : MonoBehaviour
         cardClass.cardClass = new(BalootGameManager._instance.cardManager.playedCards[^1].house, BalootGameManager._instance.cardManager.playedCards[^1].cardName);
         cardClass.GetComponent<RawImage>().texture = texture;
         cardClass.GetComponent<RawImage>().raycastTarget = false;
+    }
+    internal void ShowTurn()
+    {
+        foreach (var item in slots)
+        {
+            item.turn.gameObject.SetActive(false);
+            item.takeCard.gameObject.SetActive(false);
+        }
+
+        if (BalootGameManager._instance.cardManager.turn != RoomManager._instance.localPlayerTurn)
+        {
+            return;
+        }
+        slots[BalootGameManager._instance.cardManager.turn].turn.gameObject.SetActive(true);
+        slots[BalootGameManager._instance.cardManager.turn].takeCard.gameObject.SetActive(true);
     }
 }

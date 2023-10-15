@@ -16,7 +16,7 @@ public class TakeCardPlayer : MonoBehaviour
     private void TakeCard()
     {
         Debug.LogError("s");
-        if (BalootGameManager._instance.cardManager.turn != RoomManager._instance.indexOfPlayer)
+        if (BalootGameManager._instance.cardManager.turn != RoomManager._instance.localPlayerTurn)
         {
             return;
         }

@@ -13,10 +13,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public TextMeshProUGUI statusText;
     PhotonView photonViewComponent;
     public PlayerClass balootPlayerClass;
-    public int indexOfPlayer;
+    public int localPlayerTurn;
     public string nameOfPlayer;
     internal BalootPlayer recentlyJoinedPlayer;
-    public int RealIndex ;
+    public int indexInGlobalPlayerList ;
 
     public bool DidTimeout { private set; get; }
     static readonly RoomOptions s_RoomOptions = new RoomOptions
@@ -29,11 +29,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     void Awake()
     {
-        RealIndex = -1;
+        indexInGlobalPlayerList = -1;
         _instance = this;
         Assert.AreEqual(1, FindObjectsOfType<RoomManager>().Length);
         photonViewComponent = GetComponent<PhotonView>();
-        indexOfPlayer = -1;
+        localPlayerTurn = -1;
         
 
 
@@ -221,9 +221,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             yield return null;
         }
-        indexOfPlayer = -1;
+        localPlayerTurn = -1;
                 photonViewComponent.RPC(nameof(InstantiateAndAssignPlayer), RpcTarget.AllBufferedViaServer,new object[] {json } );
-        while(indexOfPlayer == -1 || balootPlayerClass==null )
+        while(localPlayerTurn == -1 || balootPlayerClass==null )
         {
             yield return null;
         }
