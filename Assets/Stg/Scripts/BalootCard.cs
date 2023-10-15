@@ -85,6 +85,12 @@ public class CardManager
     public int turn;
     public CardClass selectedCard;
 
+    bool isTurnReversed = false;
+    bool skipTurn = false;
+    bool isForcedDrawCards = false;
+    bool keepTurn = false;
+    int takeCards = 0;
+
     public CardManager()
     {
         totalCards = new();
@@ -183,6 +189,18 @@ public class CardManager
     //    }
     //    else { return false; }
     //}
+
+    public void TakeCard()
+    {
+        if(remainingDeck.Count == 0)
+        {
+            for(int i = 0; i < playedCards.Count - 1; i++)
+            {
+                remainingDeck.Add(playedCards[i]);
+            }
+        }
+        playerClasses[RoomManager._instance.RealIndex].cards.Add(remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)]);
+    }
     public bool PlayCard()
     {
         //int indexOfPlayer = playerClasses.IndexOf( playerClasses.Find(x => x.turnNumber == turn));
@@ -190,18 +208,48 @@ public class CardManager
         if (selectedCard != null)
         {
             var canPlay = CanPlay(selectedCard);
-            Debug.LogError(canPlay);
+            Debug.LogError("Can Play Card: " + canPlay);
             if (canPlay)
             {
                 bool s = playerClasses[RoomManager._instance.RealIndex].cards.Remove(playerClasses[RoomManager._instance.RealIndex].cards.Find(x => selectedCard.house == x.house && selectedCard.cardName == x.cardName));
-                Debug.LogError(s); 
+                Debug.LogError("Card removed: " + s); 
                 playedCards.Add(selectedCard);
-                ChangeTurn();
+                CheckForWildCards(selectedCard);
+                if (!keepTurn)
+                {
+                    ChangeTurn();
+                }
+                else
+                {
+                    keepTurn = false;
+                }
                 //GameUIManager._instance.RefereshCards();
                 BalootGameManager._instance.PlayCard();
-                while (!CanPlay(playerClasses[RoomManager._instance.RealIndex]) && remainingDeck.Count>0)
+                //while (!CanPlay(playerClasses[RoomManager._instance.RealIndex]) && remainingDeck.Count>0)
+                //{
+                //    playerClasses[RoomManager._instance.RealIndex].cards.Add(remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)]);
+                //}
+                if(selectedCard.cardName == CardName.Two)
                 {
-                    playerClasses[RoomManager._instance.RealIndex].cards.Add(remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)]);
+                    if(!CheckIfPlayerHasCardName(CardName.Two, playerClasses[RoomManager._instance.RealIndex]))
+                    {
+                        for(int i = 0; i < takeCards; i++)
+                        {
+                            TakeCard();
+                        }
+                        takeCards = 0;
+                    }
+                }
+                else if(selectedCard.cardName == CardName.Jack && (selectedCard.house == House.Spade || selectedCard.house == House.Club))
+                {
+                    if (!CheckIfPlayerHasCardName(CardName.Jack, playerClasses[RoomManager._instance.RealIndex]))
+                    {
+                        for (int i = 0; i < takeCards; i++)
+                        {
+                            TakeCard();
+                        }
+                        takeCards = 0;
+                    }
                 }
                 return true;
             }
@@ -221,12 +269,82 @@ public class CardManager
         }
         return false;
     }
+
+    public bool CheckIfPlayerHasCardName(CardName cardName, PlayerClass playerClass)
+    {
+        foreach (var item in playerClass.cards)
+        {
+            if (item.cardName == cardName)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool CheckIfPlayerHasCardHouse(House house, PlayerClass playerClass)
+    {
+        foreach (var item in playerClass.cards)
+        {
+            if (item.house == house)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void ChangeTurn()
     {
-        turn++;
-        if (turn >= PlayerManager._instance.players.Length)
+        if(!isTurnReversed)
         {
-            turn = 0;
+            turn++;
+            if (turn >= PlayerManager._instance.players.Length)
+            {
+                turn = 0;
+            }
+        }
+        else
+        {
+            turn--;
+            if (turn < 0)
+            {
+                turn = PlayerManager._instance.players.Length - 1;
+            }
+        }
+        if(skipTurn)
+        {
+            skipTurn = false;
+            ChangeTurn();
         }
     }
+
+    void CheckForWildCards(CardClass playedCard)
+    {
+        if(playedCard.cardName == CardName.King)
+        {
+            isTurnReversed = !isTurnReversed;
+        }
+        else if(playedCard.cardName == CardName.Eight)
+        {
+            skipTurn = true;
+        }
+        else if(playedCard.cardName == CardName.Queen)
+        {
+            keepTurn = true;
+        }
+        else if(playedCard.cardName == CardName.Two)
+        {
+            takeCards += 2;
+        }
+        else if(playedCard.cardName == CardName.Jack && (playedCard.house == House.Spade || playedCard.house == House.Club))
+        {
+            takeCards += 5;
+        }
+        else if(playedCard.cardName == CardName.Jack && (playedCard.house == House.Heart || playedCard.house == House.Diamond))
+        {
+            takeCards = 0;
+        }
+    }
+
    }

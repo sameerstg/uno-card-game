@@ -102,6 +102,7 @@ public class BalootGameManager : MonoBehaviour
         foreach (var item in GameUIManager._instance.slots)
         {
             item.turn.gameObject.SetActive(false);
+            item.takeCard.gameObject.SetActive(false);
         }
 
         if (cardManager.turn != RoomManager._instance.indexOfPlayer)
@@ -109,7 +110,7 @@ public class BalootGameManager : MonoBehaviour
             return;
         }
         GameUIManager._instance.slots[cardManager.turn].turn.gameObject.SetActive(true);
-
+        GameUIManager._instance.slots[cardManager.turn].takeCard.gameObject.SetActive(true);
     }
 
 }

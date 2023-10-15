@@ -45,6 +45,7 @@ MonoBehaviour:
   - RespawnSpaceship
   - InstantiateAndAssignPlayer
   - PlayCardPun
+  - SyncNewGame
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
