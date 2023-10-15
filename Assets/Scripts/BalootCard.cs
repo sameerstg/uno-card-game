@@ -200,6 +200,7 @@ public class CardManager
             }
         }
         playerClasses[RoomManager._instance.indexInGlobalPlayerList].cards.Add(remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)]);
+        BalootGameManager._instance.SyncCardManager();
     }
     public bool PlayCard()
     {
