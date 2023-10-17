@@ -40,7 +40,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     }
     private void Start()
     {
-        JoinOrCreateRoom("3253125saf");
+        JoinOrCreateRoom("32531ss5saf");
     }
     public void ReleaseBalance(string name)
     {
