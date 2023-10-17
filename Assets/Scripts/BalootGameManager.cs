@@ -45,7 +45,8 @@ public class BalootGameManager : MonoBehaviour
         cardManager = JsonConvert.DeserializeObject<CardManager>(cardManagerParam);
         RoomManager._instance.localPlayerTurn = cardManager.playerClasses.Find(x => x.photonId == PhotonNetwork.LocalPlayer.UserId).turnNumber;
         RoomManager._instance.indexInGlobalPlayerList = cardManager.playerClasses.IndexOf(cardManager.playerClasses.Find(x => x.photonId == PhotonNetwork.LocalPlayer.UserId));
-        GameUIManager._instance.RefereshUi();
+        //GameUIManager._instance.RefereshUi();
+        GameUIManager._instance.DistributeCards();
     }
    
     [PunRPC]

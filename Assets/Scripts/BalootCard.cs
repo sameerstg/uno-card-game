@@ -26,6 +26,8 @@ public class BalootCard : MonoBehaviour
 
         //if (BalootGameManager._instance.cardManager.playerClasses.Find(x=>x.turnNumber == RoomManager._instance.indexOfPlayer).cards.Exists(x=>x.cardName == cardClass.cardName && x.house == cardClass.house))
         //    return;
+        //if (BalootGameManager._instance.cardManager.turn != transform.parent.parent.GetSiblingIndex())
+        //    return;
 
         for (int i = 0; i < transform.parent.childCount; i++)
         {
