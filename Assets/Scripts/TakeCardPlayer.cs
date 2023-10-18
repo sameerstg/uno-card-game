@@ -1,7 +1,3 @@
-using Photon.Pun;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,6 +18,10 @@ public class TakeCardPlayer : MonoBehaviour
         }
 
         BalootGameManager._instance.cardManager.TakeCard();
+        if (!BalootGameManager._instance.cardManager.CanPlay(BalootGameManager._instance.cardManager.playerClasses[RoomManager._instance.indexInGlobalPlayerList]))
+        {
+            BalootGameManager._instance.cardManager.ChangeTurn();
+        }
         GameUIManager._instance.slots[BalootGameManager._instance.cardManager.turn].takeCard.gameObject.SetActive(false);
         Debug.Log("Card Taken From Remaining Deck");
     }

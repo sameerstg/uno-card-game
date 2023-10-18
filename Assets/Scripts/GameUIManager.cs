@@ -23,6 +23,11 @@ public class GameUIManager : MonoBehaviour
     }
     public void RefereshUi()
     {
+        foreach (var item in slots)
+        {
+            item.turn.SetActive(false);
+            item.takeCard.SetActive(false);
+        }
         for (int i = 0; i < BalootGameManager._instance.cardManager.playerClasses.Count; i++)
         {
             foreach (var item in slots[i].cards)
@@ -31,16 +36,11 @@ public class GameUIManager : MonoBehaviour
             }
             slots[i].cards.Clear();
             slots[i].nameTitle.text = BalootGameManager._instance.cardManager.playerClasses[i].playerName;
-            if (BalootGameManager._instance.cardManager.turn == BalootGameManager._instance.cardManager.playerClasses[i].turnNumber)
-            {
-                slots[i].nameTitle.text += $" Turn";
-            }
+
             for (int k = 0; k < BalootGameManager._instance.cardManager.playerClasses[i].cards.Count; k++)
             {
                 //Debug.Log(PlayerManager._instance.players[i].balootPlayerClass.cards[k].house);
                 //Debug.Log(PlayerManager._instance.players[i].balootPlayerClass.cards[k].cardName);
-
-
                 //Texture2D texture = Instantiate
                 //    (Resources.Load<Texture2D>(($"Cards\\{House.Spade}\\"
                 //    + $"{CardName.Ace}")));
@@ -57,9 +57,8 @@ public class GameUIManager : MonoBehaviour
 
             }
         }
-
         RefreshPlayedCards();
-        ShowTurn();
+            ShowTurn();
     }
 
     public void RefreshPlayedCards()
@@ -89,17 +88,23 @@ public class GameUIManager : MonoBehaviour
     }
     internal void ShowTurn()
     {
-        foreach (var item in slots)
+        Debug.LogError(RoomManager._instance.indexInGlobalPlayerList);
+        Debug.LogError(RoomManager._instance.localPlayerTurn);
+        Debug.LogError(BalootGameManager._instance.cardManager.turn);
+        if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
         {
-            item.turn.gameObject.SetActive(false);
-            item.takeCard.gameObject.SetActive(false);
+            Debug.LogError(RoomManager._instance.indexInGlobalPlayerList);
+            Debug.LogError(RoomManager._instance.localPlayerTurn);
+            //slots[RoomManager._instance.indexInGlobalPlayerList].nameTitle.text += $" Turn";
+            slots[RoomManager._instance.indexInGlobalPlayerList].turn.SetActive(true);
+            slots[RoomManager._instance.indexInGlobalPlayerList].takeCard.SetActive(true);
+            
         }
+        //if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
+        //{
+        //    slots[BalootGameManager._instance.cardManager.turn].turn.gameObject.SetActive(true);
 
-        if (BalootGameManager._instance.cardManager.turn != RoomManager._instance.localPlayerTurn)
-        {
-            return;
-        }
-        slots[BalootGameManager._instance.cardManager.turn].turn.gameObject.SetActive(true);
+        //}
         //slots[BalootGameManager._instance.cardManager.turn].takeCard.gameObject.SetActive(true);
     }
 
@@ -113,10 +118,10 @@ public class GameUIManager : MonoBehaviour
             }
             slots[i].cards.Clear();
             slots[i].nameTitle.text = BalootGameManager._instance.cardManager.playerClasses[i].playerName;
-            if (BalootGameManager._instance.cardManager.turn == BalootGameManager._instance.cardManager.playerClasses[i].turnNumber)
-            {
-                slots[i].nameTitle.text += $" Turn";
-            }
+            //if (BalootGameManager._instance.cardManager.turn == BalootGameManager._instance.cardManager.playerClasses[i].turnNumber)
+            //{
+            //    slots[i].nameTitle.text += $" Turn";
+            //}
             int k = 0;
             StartCoroutine(CardAnimation(i, k));
             //for (int k = 0; k < BalootGameManager._instance.cardManager.playerClasses[i].cards.Count; k++)
@@ -162,7 +167,7 @@ public class GameUIManager : MonoBehaviour
         Vector3 targetPosition = slots[i].cardParent.transform.position;
         if (slots[i].cardParent.transform.childCount != 0)
         {
-            targetPosition += new Vector3(k * 50, 0f, 0f);
+            targetPosition += new Vector3(k * 25, 0f, 0f);
         }
         card.transform.DORotate(new Vector3(0f, 90f, 0f), 0.5f, RotateMode.Fast).OnComplete(delegate
         {

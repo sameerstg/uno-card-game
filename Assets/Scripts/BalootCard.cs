@@ -1,6 +1,4 @@
-using SWNetwork;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -13,7 +11,6 @@ public class BalootCard : MonoBehaviour
 
     private void Start()
     {
-
         GetComponent<Button>().onClick.AddListener(() => SelectCard());
     }
 
@@ -29,12 +26,14 @@ public class BalootCard : MonoBehaviour
         //if (BalootGameManager._instance.cardManager.turn != transform.parent.parent.GetSiblingIndex())
         //    return;
 
+        if (!BalootGameManager._instance.cardManager.playerClasses[RoomManager._instance.indexInGlobalPlayerList].cards.Exists(x => x.cardName == cardClass.cardName && x.house == cardClass.house))
+            return;
+        //Debug.LogError(BalootGameManager._instance.cardManager.CanPlay(cardClass));
         for (int i = 0; i < transform.parent.childCount; i++)
         {
             transform.parent.GetChild(i).GetComponent<BalootCard>().selected = false;
             transform.parent.GetChild(i).localScale = Vector3.one;
         }
-
         if (!selected)
         {
             selected = true;
@@ -45,7 +44,6 @@ public class BalootCard : MonoBehaviour
         {
             selected = false;
             BalootGameManager._instance.cardManager.selectedCard = null;
-
             transform.localScale = Vector3.one;
         }
     }
@@ -103,7 +101,6 @@ public class CardManager
             }
         }
         remainingDeck = totalCards.ToList();
-
     }
     public List<List<CardClass>> GetCardsForPlayers(int playerCount)
     {
@@ -201,7 +198,7 @@ public class CardManager
                 // should remove from played?
             }
         }
-        playerClasses[RoomManager._instance.indexInGlobalPlayerList].cards.Add(remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)]);
+        playerClasses[BalootGameManager._instance.cardManager.turn].cards.Add(remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)]);
         BalootGameManager._instance.SyncCardManager();
     }
     public bool PlayCard()
@@ -221,34 +218,34 @@ public class CardManager
                 if (!keepTurn)
                 {
                     ChangeTurn();
+                    if (selectedCard.cardName == CardName.Two)
+                    {
+                        if (!CheckIfPlayerHasCardName(CardName.Two, playerClasses[RoomManager._instance.indexInGlobalPlayerList]))
+                        {
+                            for (int i = 0; i < takeCards; i++)
+                            {
+                                TakeCard();
+                            }
+                            takeCards = 0;
+                        }
+                    }
+                    else if (selectedCard.cardName == CardName.Jack && (selectedCard.house == House.Spade || selectedCard.house == House.Club))
+                    {
+                        if (!CheckIfPlayerHasCardName(CardName.Jack, playerClasses[RoomManager._instance.indexInGlobalPlayerList]))
+                        {
+                            for (int i = 0; i < takeCards; i++)
+                            {
+                                TakeCard();
+                            }
+                            takeCards = 0;
+                        }
+                    }
                 }
                 else
                 {
                     keepTurn = false;
                 }
                 BalootGameManager._instance.SyncCardManager();
-                if (selectedCard.cardName == CardName.Two)
-                {
-                    if (!CheckIfPlayerHasCardName(CardName.Two, playerClasses[RoomManager._instance.indexInGlobalPlayerList]))
-                    {
-                        for (int i = 0; i < takeCards; i++)
-                        {
-                            TakeCard();
-                        }
-                        takeCards = 0;
-                    }
-                }
-                else if (selectedCard.cardName == CardName.Jack && (selectedCard.house == House.Spade || selectedCard.house == House.Club))
-                {
-                    if (!CheckIfPlayerHasCardName(CardName.Jack, playerClasses[RoomManager._instance.indexInGlobalPlayerList]))
-                    {
-                        for (int i = 0; i < takeCards; i++)
-                        {
-                            TakeCard();
-                        }
-                        takeCards = 0;
-                    }
-                }
                 return true;
             }
             else { return false; }
@@ -292,7 +289,7 @@ public class CardManager
         return false;
     }
 
-    void ChangeTurn()
+   internal void ChangeTurn()
     {
         if (!isTurnReversed)
         {

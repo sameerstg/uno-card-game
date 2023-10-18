@@ -33,14 +33,14 @@ public class BalootGameManager : MonoBehaviour
                 list.Add(PlayerManager._instance.players[i].balootPlayerClass);
             }
             this.cardManager.StartGame(list);
-            photonView.RPC(nameof(SyncNewGame), RpcTarget.All, new object[] { JsonConvert.SerializeObject(list), JsonConvert.SerializeObject(cardManager) });
+            photonView.RPC(nameof(SyncNewGame), RpcTarget.All, new object[] { JsonConvert.SerializeObject(cardManager) });
         }
 
 
         //GiveCardsToPlayer();
     }
     [PunRPC]
-    public void SyncNewGame(string players, string cardManagerParam)
+    public void SyncNewGame(string cardManagerParam)
     {
         cardManager = JsonConvert.DeserializeObject<CardManager>(cardManagerParam);
         RoomManager._instance.localPlayerTurn = cardManager.playerClasses.Find(x => x.photonId == PhotonNetwork.LocalPlayer.UserId).turnNumber;
