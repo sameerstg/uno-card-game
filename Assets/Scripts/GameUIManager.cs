@@ -37,6 +37,17 @@ public class GameUIManager : MonoBehaviour
             slots[i].cards.Clear();
             slots[i].nameTitle.text = BalootGameManager._instance.cardManager.playerClasses[i].playerName;
 
+            if (BalootGameManager._instance.cardManager.IsGameEnded())
+            {
+                if (BalootGameManager._instance.cardManager.playerClasses[i].cards.Count>0)
+                {
+                    slots[i].nameTitle.text += " Winner";
+                }
+            }
+            else
+            {
+                ShowTurn();
+            }
             for (int k = 0; k < BalootGameManager._instance.cardManager.playerClasses[i].cards.Count; k++)
             {
                 //Debug.Log(PlayerManager._instance.players[i].balootPlayerClass.cards[k].house);
@@ -58,7 +69,8 @@ public class GameUIManager : MonoBehaviour
             }
         }
         RefreshPlayedCards();
-            ShowTurn();
+       
+
     }
 
     public void RefreshPlayedCards()
@@ -94,8 +106,8 @@ public class GameUIManager : MonoBehaviour
         //if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
         if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.indexInGlobalPlayerList)
         {
-            Debug.LogError(RoomManager._instance.indexInGlobalPlayerList);
-            Debug.LogError(RoomManager._instance.localPlayerTurn);
+            //Debug.LogError(RoomManager._instance.indexInGlobalPlayerList);
+            //Debug.LogError(RoomManager._instance.localPlayerTurn);
             //slots[RoomManager._instance.indexInGlobalPlayerList].nameTitle.text += $" Turn";
             slots[RoomManager._instance.indexInGlobalPlayerList].turn.SetActive(true);
             if (BalootGameManager._instance.cardManager.playerClasses[RoomManager._instance.indexInGlobalPlayerList].cardTaken && BalootGameManager._instance.cardManager.turn == RoomManager._instance.indexInGlobalPlayerList)
