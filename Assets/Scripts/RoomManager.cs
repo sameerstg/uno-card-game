@@ -196,7 +196,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
 
             Debug.LogError("Cards distributed");
-            photonViewComponent.RPC(nameof(GiveCardsToPlayerPun), RpcTarget.AllBufferedViaServer);
+            //photonViewComponent.RPC(nameof(GiveCardsToPlayerPun), RpcTarget.AllBufferedViaServer);
         }
         GameManager._instance.gameState = GameState.PostInstantiate;
         
@@ -282,11 +282,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
         
     }
 
-    [PunRPC]
-    void GiveCardsToPlayerPun()
-    {
-        BalootGameManager._instance.NewGame();
-    }
+    //[PunRPC]
+    //void GiveCardsToPlayerPun()
+    //{
+    //    BalootGameManager._instance.NewGame();
+    //}
     //[PunRPC]
     //private void AssignPlayer(string balootPlayer)
     //{

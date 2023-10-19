@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Photon.Pun;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,9 +7,9 @@ using UnityEngine;
 [Serializable]
 public class CardManager
 {
+    public List<CardClass> remainingDeck;
     public List<PlayerClass> playerClasses = new();
     //internal List<CardClass> totalCards;
-    public List<CardClass> remainingDeck;
     public List<CardClass> playedCards;
     internal OnPlay onPlayCard;
     public int turn = 0;
@@ -19,10 +20,14 @@ public class CardManager
     bool isForcedDrawCards = false;
     bool keepTurn = false;
     int takeCards = 0;
-    
+
     public CardManager()
     {
         //totalCards = new();
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            return;
+        }
         remainingDeck = new();
         foreach (var house in Enum.GetNames(typeof(House)))
         {
@@ -31,6 +36,8 @@ public class CardManager
                 remainingDeck.Add(new(Enum.Parse<House>(house), Enum.Parse<CardName>(cardName)));
             }
         }
+
+        Debug.LogError(remainingDeck.Count);
         //remainingDeck = totalCards.ToList();
     }
     public List<List<CardClass>> GetCardsForPlayers(int playerCount)
@@ -48,15 +55,19 @@ public class CardManager
                 {
                     return null;
                 }
-                var randomCardFromRemaining = remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)];
-                playersCards[j].Add(randomCardFromRemaining);
-               Debug.LogError( remainingDeck.Remove(randomCardFromRemaining));
+                var randomCardFromRemaining = UnityEngine.Random.Range(0, remainingDeck.Count);
+                playersCards[j].Add(remainingDeck[randomCardFromRemaining]);
+                remainingDeck.RemoveAt(randomCardFromRemaining);
+                Debug.LogError(remainingDeck.Count);
             }
         }
         return playersCards;
     }
     public bool StartGame(List<PlayerClass> players)
     {
+        Debug.LogError(remainingDeck.Count+"2");
+
+        playedCards = new();
         if (players == null || players.Count == 0)
         {
             return false;
@@ -67,7 +78,6 @@ public class CardManager
             numbers.Add(i);
         }
 
-        playedCards = new();
 
 
         var playersCards = GetCardsForPlayers(players.Count);
@@ -85,10 +95,12 @@ public class CardManager
         {
             return false;
         }
-        var luckyCard = remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)];
-        playedCards.Add(luckyCard);
-        Debug.LogError(remainingDeck.Remove(luckyCard));
+        var luckyCard = UnityEngine.Random.Range(0, remainingDeck.Count);
+        playedCards.Add(remainingDeck[luckyCard]);
+        remainingDeck.RemoveAt(luckyCard);
         playerClasses = players;
+        Debug.LogError(remainingDeck.Count+"ss");
+
         return true;
     }
     public bool CanPlay(CardClass card)
@@ -106,12 +118,12 @@ public class CardManager
                 playedCards.RemoveAt(i);
             }
         }
-        var randCard = remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)];
-        playerClasses[BalootGameManager._instance.cardManager.turn].cards.Add(randCard);
-        remainingDeck.Remove(randCard);
+        var randCard = UnityEngine.Random.Range(0, remainingDeck.Count);
+        playerClasses[RoomManager._instance.indexInGlobalPlayerList].cards.Add(remainingDeck[randCard]);
+        remainingDeck.RemoveAt(randCard);
         if(cardPicked)
         {
-            playerClasses[BalootGameManager._instance.cardManager.turn].cardTaken = true;
+            playerClasses[RoomManager._instance.indexInGlobalPlayerList].cardTaken = true;
             //playerClasses[RoomManager._instance.indexInGlobalPlayerList].cardTaken = true;
         }
         BalootGameManager._instance.SyncCardManager();
@@ -126,16 +138,17 @@ public class CardManager
             //Debug.LogError("Can Play Card: " + canPlay);
             if (canPlay)
             {
-                bool s = playerClasses[RoomManager._instance.indexInGlobalPlayerList].cards.Remove(playerClasses[RoomManager._instance.indexInGlobalPlayerList].cards.Find(x => selectedCard.house == x.house && selectedCard.cardName == x.cardName));
+                var card = playerClasses[RoomManager._instance.indexInGlobalPlayerList].cards.Find(x => selectedCard.house == x.house && selectedCard.cardName == x.cardName);
+                bool s = playerClasses[RoomManager._instance.indexInGlobalPlayerList].cards.Remove(card);
                 //Debug.LogError("Card removed: " + s);
-                playedCards.Add(selectedCard);
+                playedCards.Add(card);
                 CheckForWildCards(selectedCard);
                 if (!keepTurn)
                 {
                     ChangeTurn();
                     if (selectedCard.cardName == CardName.Two)
                     {
-                        if (!CheckIfPlayerHasCardName(CardName.Two, playerClasses[BalootGameManager._instance.cardManager.turn]))
+                        if (!CheckIfPlayerHasCardName(CardName.Two, playerClasses[RoomManager._instance.indexInGlobalPlayerList]))
                         {
                             for (int i = 0; i < takeCards; i++)
                             {
@@ -146,7 +159,7 @@ public class CardManager
                     }
                     else if (selectedCard.cardName == CardName.Jack && (selectedCard.house == House.Spade || selectedCard.house == House.Club))
                     {
-                        if (!CheckIfPlayerHasCardName(CardName.Jack, playerClasses[BalootGameManager._instance.cardManager.turn]))
+                        if (!CheckIfPlayerHasCardName(CardName.Jack, playerClasses[RoomManager._instance.indexInGlobalPlayerList]))
                         {
                             for (int i = 0; i < takeCards; i++)
                             {

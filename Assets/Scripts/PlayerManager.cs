@@ -50,7 +50,7 @@ public class PlayerManager : MonoBehaviour
                         GameUIManager._instance.slots[i].nameTitle.color = Color.red;
                         RoomManager._instance.localPlayerTurn = i;
                     }
-                    if (i == 1)
+                    if (i == 1 && PhotonNetwork.IsMasterClient)
                     {
                         BalootGameManager._instance.NewGame();
 

@@ -39,7 +39,7 @@ public class GameUIManager : MonoBehaviour
 
             if (BalootGameManager._instance.cardManager.IsGameEnded())
             {
-                if (BalootGameManager._instance.cardManager.playerClasses[i].cards.Count > 0)
+                if (BalootGameManager._instance.cardManager.playerClasses[i].cards.Count == 0)
                 {
                     slots[i].nameTitle.text += " Winner";
                 }
