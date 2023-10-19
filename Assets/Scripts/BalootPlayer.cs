@@ -17,6 +17,8 @@ public class PlayerClass
     public string photonId;
     public List<CardClass> cards = new();
     public int turnNumber;
+    public bool cardTaken = false;
+
     public PlayerClass()
     {
 

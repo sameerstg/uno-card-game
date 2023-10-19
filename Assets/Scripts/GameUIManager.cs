@@ -91,14 +91,26 @@ public class GameUIManager : MonoBehaviour
         Debug.LogError(RoomManager._instance.indexInGlobalPlayerList);
         Debug.LogError(RoomManager._instance.localPlayerTurn);
         Debug.LogError(BalootGameManager._instance.cardManager.turn);
-        if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
+        //if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
+        if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.indexInGlobalPlayerList)
         {
             Debug.LogError(RoomManager._instance.indexInGlobalPlayerList);
             Debug.LogError(RoomManager._instance.localPlayerTurn);
             //slots[RoomManager._instance.indexInGlobalPlayerList].nameTitle.text += $" Turn";
             slots[RoomManager._instance.indexInGlobalPlayerList].turn.SetActive(true);
-            slots[RoomManager._instance.indexInGlobalPlayerList].takeCard.SetActive(true);
-            
+            if (BalootGameManager._instance.cardManager.playerClasses[RoomManager._instance.indexInGlobalPlayerList].cardTaken && BalootGameManager._instance.cardManager.turn == RoomManager._instance.indexInGlobalPlayerList)
+            {
+                slots[BalootGameManager._instance.cardManager.turn].takeCard.SetActive(false);
+            }
+            else
+            {
+                slots[RoomManager._instance.indexInGlobalPlayerList].takeCard.SetActive(true);
+            }
+
+            foreach(PlayerClass item in BalootGameManager._instance.cardManager.playerClasses)
+            {
+                item.cardTaken = false;
+            }           
         }
         //if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
         //{

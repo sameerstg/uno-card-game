@@ -81,7 +81,7 @@ public class CardManager
     public List<CardClass> remainingDeck;
     public List<CardClass> playedCards;
     internal OnPlay onPlayCard;
-    public int turn;
+    public int turn = 0;
     public CardClass selectedCard;
 
     bool isTurnReversed = false;
@@ -188,17 +188,22 @@ public class CardManager
     //    else { return false; }
     //}
 
-    public void TakeCard()
+    public void TakeCard(bool cardPicked = false)
     {
         if (remainingDeck.Count == 0)
         {
-            for (int i = 0; i < playedCards.Count - 1; i++)
+            for (int i = playedCards.Count - 2; i > 0 ; i--)
             {
                 remainingDeck.Add(playedCards[i]);
-                // should remove from played?
+                playedCards.RemoveAt(i);
             }
         }
         playerClasses[BalootGameManager._instance.cardManager.turn].cards.Add(remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)]);
+        if(cardPicked)
+        {
+            playerClasses[BalootGameManager._instance.cardManager.turn].cardTaken = true;
+            //playerClasses[RoomManager._instance.indexInGlobalPlayerList].cardTaken = true;
+        }
         BalootGameManager._instance.SyncCardManager();
     }
     public bool PlayCard()
@@ -220,7 +225,7 @@ public class CardManager
                     ChangeTurn();
                     if (selectedCard.cardName == CardName.Two)
                     {
-                        if (!CheckIfPlayerHasCardName(CardName.Two, playerClasses[RoomManager._instance.indexInGlobalPlayerList]))
+                        if (!CheckIfPlayerHasCardName(CardName.Two, playerClasses[BalootGameManager._instance.cardManager.turn]))
                         {
                             for (int i = 0; i < takeCards; i++)
                             {
@@ -231,7 +236,7 @@ public class CardManager
                     }
                     else if (selectedCard.cardName == CardName.Jack && (selectedCard.house == House.Spade || selectedCard.house == House.Club))
                     {
-                        if (!CheckIfPlayerHasCardName(CardName.Jack, playerClasses[RoomManager._instance.indexInGlobalPlayerList]))
+                        if (!CheckIfPlayerHasCardName(CardName.Jack, playerClasses[BalootGameManager._instance.cardManager.turn]))
                         {
                             for (int i = 0; i < takeCards; i++)
                             {

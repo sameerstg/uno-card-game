@@ -17,12 +17,13 @@ public class TakeCardPlayer : MonoBehaviour
             return;
         }
 
-        BalootGameManager._instance.cardManager.TakeCard();
+        BalootGameManager._instance.cardManager.TakeCard(true);
         if (!BalootGameManager._instance.cardManager.CanPlay(BalootGameManager._instance.cardManager.playerClasses[RoomManager._instance.indexInGlobalPlayerList]))
         {
             BalootGameManager._instance.cardManager.ChangeTurn();
+            BalootGameManager._instance.SyncCardManager();
         }
-        GameUIManager._instance.slots[BalootGameManager._instance.cardManager.turn].takeCard.gameObject.SetActive(false);
+        //GameUIManager._instance.slots[BalootGameManager._instance.cardManager.turn].takeCard.gameObject.SetActive(false);
         Debug.Log("Card Taken From Remaining Deck");
     }
 }
