@@ -20,6 +20,6 @@ public class TurnPlayer : MonoBehaviour
             return;
         }
         var played = BalootGameManager._instance.cardManager.PlayCard();
-        Debug.LogError("Card Played Pressed: " + played);
+        //Debug.LogError("Card Played Pressed: " + played);
     }
 }

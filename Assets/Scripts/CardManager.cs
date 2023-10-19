@@ -7,7 +7,7 @@ using UnityEngine;
 public class CardManager
 {
     public List<PlayerClass> playerClasses = new();
-    internal List<CardClass> totalCards;
+    //internal List<CardClass> totalCards;
     public List<CardClass> remainingDeck;
     public List<CardClass> playedCards;
     internal OnPlay onPlayCard;
@@ -22,15 +22,16 @@ public class CardManager
     
     public CardManager()
     {
-        totalCards = new();
+        //totalCards = new();
+        remainingDeck = new();
         foreach (var house in Enum.GetNames(typeof(House)))
         {
             foreach (var cardName in Enum.GetNames(typeof(CardName)))
             {
-                totalCards.Add(new(Enum.Parse<House>(house), Enum.Parse<CardName>(cardName)));
+                remainingDeck.Add(new(Enum.Parse<House>(house), Enum.Parse<CardName>(cardName)));
             }
         }
-        remainingDeck = totalCards.ToList();
+        //remainingDeck = totalCards.ToList();
     }
     public List<List<CardClass>> GetCardsForPlayers(int playerCount)
     {
@@ -49,7 +50,7 @@ public class CardManager
                 }
                 var randomCardFromRemaining = remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)];
                 playersCards[j].Add(randomCardFromRemaining);
-                remainingDeck.Remove(randomCardFromRemaining);
+               Debug.LogError( remainingDeck.Remove(randomCardFromRemaining));
             }
         }
         return playersCards;
@@ -86,7 +87,7 @@ public class CardManager
         }
         var luckyCard = remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)];
         playedCards.Add(luckyCard);
-        remainingDeck.Remove(luckyCard);
+        Debug.LogError(remainingDeck.Remove(luckyCard));
         playerClasses = players;
         return true;
     }
@@ -105,7 +106,9 @@ public class CardManager
                 playedCards.RemoveAt(i);
             }
         }
-        playerClasses[BalootGameManager._instance.cardManager.turn].cards.Add(remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)]);
+        var randCard = remainingDeck[UnityEngine.Random.Range(0, remainingDeck.Count)];
+        playerClasses[BalootGameManager._instance.cardManager.turn].cards.Add(randCard);
+        remainingDeck.Remove(randCard);
         if(cardPicked)
         {
             playerClasses[BalootGameManager._instance.cardManager.turn].cardTaken = true;
@@ -120,11 +123,11 @@ public class CardManager
         if (selectedCard != null)
         {
             var canPlay = CanPlay(selectedCard);
-            Debug.LogError("Can Play Card: " + canPlay);
+            //Debug.LogError("Can Play Card: " + canPlay);
             if (canPlay)
             {
                 bool s = playerClasses[RoomManager._instance.indexInGlobalPlayerList].cards.Remove(playerClasses[RoomManager._instance.indexInGlobalPlayerList].cards.Find(x => selectedCard.house == x.house && selectedCard.cardName == x.cardName));
-                Debug.LogError("Card removed: " + s);
+                //Debug.LogError("Card removed: " + s);
                 playedCards.Add(selectedCard);
                 CheckForWildCards(selectedCard);
                 if (!keepTurn)

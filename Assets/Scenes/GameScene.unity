@@ -3603,6 +3603,7 @@ MonoBehaviour:
     photonId: 
     cards: []
     turnNumber: 0
+    cardTaken: 0
   localPlayerTurn: 0
   nameOfPlayer: 
   indexInGlobalPlayerList: 0
@@ -5745,7 +5746,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1941082869
 RectTransform:
   m_ObjectHideFlags: 0

@@ -39,7 +39,7 @@ public class GameUIManager : MonoBehaviour
 
             if (BalootGameManager._instance.cardManager.IsGameEnded())
             {
-                if (BalootGameManager._instance.cardManager.playerClasses[i].cards.Count>0)
+                if (BalootGameManager._instance.cardManager.playerClasses[i].cards.Count > 0)
                 {
                     slots[i].nameTitle.text += " Winner";
                 }
@@ -50,26 +50,20 @@ public class GameUIManager : MonoBehaviour
             }
             for (int k = 0; k < BalootGameManager._instance.cardManager.playerClasses[i].cards.Count; k++)
             {
-                //Debug.Log(PlayerManager._instance.players[i].balootPlayerClass.cards[k].house);
-                //Debug.Log(PlayerManager._instance.players[i].balootPlayerClass.cards[k].cardName);
-                //Texture2D texture = Instantiate
-                //    (Resources.Load<Texture2D>(($"Cards\\{House.Spade}\\"
-                //    + $"{CardName.Ace}")));
                 Texture2D texture = Instantiate
-                    (Resources.Load<Texture2D>(($"Cards\\" + BalootGameManager._instance.cardManager.playerClasses[i].cards[k].house + "\\"
-                    + $"{BalootGameManager._instance.cardManager.playerClasses[i].cards[k].cardName}")));
+    (Resources.Load<Texture2D>(($"Cards\\" + BalootGameManager._instance.cardManager.playerClasses[i].cards[k].house + "\\"
+    + $"{BalootGameManager._instance.cardManager.playerClasses[i].cards[k].cardName}")));
                 //Debug.Log(texture);
                 GameObject card = Instantiate(cardPrefab, slots[i].cardParent.transform);
                 slots[i].cards.Add(card);
                 var cardClass = card.AddComponent<BalootCard>();
                 cardClass.cardClass = new(BalootGameManager._instance.cardManager.playerClasses[i].cards[k].house, BalootGameManager._instance.cardManager.playerClasses[i].cards[k].cardName);
                 cardClass.GetComponent<RawImage>().texture = texture;
-                cardClass.cardClass.player = i;
 
             }
         }
         RefreshPlayedCards();
-       
+
 
     }
 
@@ -89,7 +83,7 @@ public class GameUIManager : MonoBehaviour
         Texture2D texture = Instantiate
                     (Resources.Load<Texture2D>(($"Cards\\" + BalootGameManager._instance.cardManager.playedCards[^1].house + "\\"
                     + $"{BalootGameManager._instance.cardManager.playedCards[^1].cardName}")));
-        Debug.Log(texture);
+        //Debug.Log(texture);
         GameObject card = Instantiate(cardPrefab, playedCardSlot.cardParent.transform);
         playedCardSlot.cards.Add(card);
         var cardClass = card.AddComponent<BalootCard>();
@@ -100,17 +94,17 @@ public class GameUIManager : MonoBehaviour
     }
     internal void ShowTurn()
     {
-        Debug.LogError(RoomManager._instance.indexInGlobalPlayerList);
-        Debug.LogError(RoomManager._instance.localPlayerTurn);
-        Debug.LogError(BalootGameManager._instance.cardManager.turn);
+        //Debug.LogError(RoomManager._instance.indexInGlobalPlayerList);
+        //Debug.LogError(RoomManager._instance.localPlayerTurn);
+        //Debug.LogError(BalootGameManager._instance.cardManager.turn);
         //if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
-        if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.indexInGlobalPlayerList)
+        if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
         {
             //Debug.LogError(RoomManager._instance.indexInGlobalPlayerList);
             //Debug.LogError(RoomManager._instance.localPlayerTurn);
             //slots[RoomManager._instance.indexInGlobalPlayerList].nameTitle.text += $" Turn";
             slots[RoomManager._instance.indexInGlobalPlayerList].turn.SetActive(true);
-            if (BalootGameManager._instance.cardManager.playerClasses[RoomManager._instance.indexInGlobalPlayerList].cardTaken && BalootGameManager._instance.cardManager.turn == RoomManager._instance.indexInGlobalPlayerList)
+            if (BalootGameManager._instance.cardManager.playerClasses[RoomManager._instance.indexInGlobalPlayerList].cardTaken && BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
             {
                 slots[BalootGameManager._instance.cardManager.turn].takeCard.SetActive(false);
             }
@@ -119,10 +113,10 @@ public class GameUIManager : MonoBehaviour
                 slots[RoomManager._instance.indexInGlobalPlayerList].takeCard.SetActive(true);
             }
 
-            foreach(PlayerClass item in BalootGameManager._instance.cardManager.playerClasses)
+            foreach (PlayerClass item in BalootGameManager._instance.cardManager.playerClasses)
             {
                 item.cardTaken = false;
-            }           
+            }
         }
         //if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
         //{
@@ -148,28 +142,6 @@ public class GameUIManager : MonoBehaviour
             //}
             int k = 0;
             StartCoroutine(CardAnimation(i, k));
-            //for (int k = 0; k < BalootGameManager._instance.cardManager.playerClasses[i].cards.Count; k++)
-            //{
-            //    //Debug.Log(PlayerManager._instance.players[i].balootPlayerClass.cards[k].house);
-            //    //Debug.Log(PlayerManager._instance.players[i].balootPlayerClass.cards[k].cardName);
-
-
-            //    //Texture2D texture = Instantiate
-            //    //    (Resources.Load<Texture2D>(($"Cards\\{House.Spade}\\"
-            //    //    + $"{CardName.Ace}")));
-            //    Texture2D texture = Instantiate
-            //        (Resources.Load<Texture2D>(($"Cards\\" + BalootGameManager._instance.cardManager.playerClasses[i].cards[k].house + "\\"
-            //        + $"{BalootGameManager._instance.cardManager.playerClasses[i].cards[k].cardName}")));
-            //    //Debug.Log(texture);
-            //    GameObject card = Instantiate(cardPrefab, slots[i].cardParent.transform);
-            //    var cardClass = card.AddComponent<BalootCard>();
-            //    cardClass.cardClass = new(BalootGameManager._instance.cardManager.playerClasses[i].cards[k].house, BalootGameManager._instance.cardManager.playerClasses[i].cards[k].cardName);
-            //    cardClass.GetComponent<RawImage>().texture = texture;
-            //    cardClass.cardClass.player = i;
-            //    card.transform.position = deck.transform.position;
-            //    card.transform.DOMove(slots[i].cardParent.transform.position, 2f);
-            //    slots[i].cards.Add(card);
-            //}
         }
     }
 
@@ -185,7 +157,6 @@ public class GameUIManager : MonoBehaviour
         var cardClass = card.AddComponent<BalootCard>();
         cardClass.cardClass = new(BalootGameManager._instance.cardManager.playerClasses[i].cards[k].house, BalootGameManager._instance.cardManager.playerClasses[i].cards[k].cardName);
         cardClass.GetComponent<RawImage>().texture = texture;
-        cardClass.cardClass.player = i;
         card.transform.position = deck.position;
         card.GetComponent<RectTransform>().DOSizeDelta(new Vector2(100, 140), 0f);
         Vector3 targetPosition = slots[i].cardParent.transform.position;

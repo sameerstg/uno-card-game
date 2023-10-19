@@ -277,10 +277,6 @@ MonoBehaviour:
       player: 0
     playedCards: []
     turn: 0
-    selectedCard:
-      house: 0
-      cardName: 0
-      player: 0
   photonView: {fileID: 0}
 --- !u!114 &1224409634095140600
 MonoBehaviour:

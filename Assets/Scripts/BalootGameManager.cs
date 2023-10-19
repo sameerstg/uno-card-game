@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using Photon.Pun;
 using Newtonsoft.Json;
+using System.IO;
 
 public class BalootGameManager : MonoBehaviour
 {
@@ -43,8 +44,15 @@ public class BalootGameManager : MonoBehaviour
     public void SyncNewGame(string cardManagerParam)
     {
         cardManager = JsonConvert.DeserializeObject<CardManager>(cardManagerParam);
-        RoomManager._instance.localPlayerTurn = cardManager.playerClasses.Find(x => x.photonId == PhotonNetwork.LocalPlayer.UserId).turnNumber;
-        RoomManager._instance.indexInGlobalPlayerList = cardManager.playerClasses.IndexOf(cardManager.playerClasses.Find(x => x.photonId == PhotonNetwork.LocalPlayer.UserId));
+        for(int i = 0;i< cardManager.playerClasses.Count;i++)
+        {
+            if (cardManager.playerClasses[i].photonId == PhotonNetwork.LocalPlayer.UserId)
+            {
+                RoomManager._instance.localPlayerTurn = cardManager.playerClasses[i].turnNumber;
+                RoomManager._instance.indexInGlobalPlayerList = i;
+            }
+        }
+       
         //GameUIManager._instance.RefereshUi();
         GameUIManager._instance.DistributeCards();
     }
@@ -52,8 +60,14 @@ public class BalootGameManager : MonoBehaviour
     [PunRPC]
     public void SyncCardManagerRPC(string cardManager)
     {
+
         this.cardManager = JsonConvert.DeserializeObject<CardManager>(cardManager);
         GameUIManager._instance.RefereshUi();
+        Debug.LogError(cardManager.Length);
+        //Debug.LogError(cardManager);
+        File.WriteAllText("logde.json",cardManager);
+        Debug.LogError(this.cardManager.remainingDeck.Count + this.cardManager.playedCards.Count + this.cardManager.playerClasses[0].cards.Count + this.cardManager.playerClasses[1].cards.Count);
+
     }
     public void SyncCardManager()
     {

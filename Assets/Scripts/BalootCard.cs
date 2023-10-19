@@ -53,7 +53,6 @@ public class CardClass
 {
     public House house;
     public CardName cardName;
-    public int player;
     public CardClass(House house, CardName cardName)
     {
         this.house = house;
