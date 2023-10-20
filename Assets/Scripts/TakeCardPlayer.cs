@@ -20,6 +20,7 @@ public class TakeCardPlayer : MonoBehaviour
         BalootGameManager._instance.cardManager.TakeCard(true);
         if (!BalootGameManager._instance.cardManager.CanPlay(BalootGameManager._instance.cardManager.playerClasses[RoomManager._instance.indexInGlobalPlayerList]))
         {
+            BalootGameManager._instance.cardManager.AddAccruedCardsOnChangeTurn();
             BalootGameManager._instance.cardManager.ChangeTurn();
             BalootGameManager._instance.SyncCardManager();
         }

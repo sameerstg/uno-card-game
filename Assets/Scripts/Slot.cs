@@ -10,4 +10,6 @@ public class Slot : MonoBehaviour
     public TextMeshProUGUI nameTitle;
     public GameObject cardParent;
     public List<GameObject> cards = new();
+    public GameObject endTurn;
+    public GameObject lastCard;
 }

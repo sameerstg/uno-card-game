@@ -68,6 +68,6 @@ public enum House
 [Serializable]
 public enum CardName
 {
-    Ace, King, Queen, Jack, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten
+    Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King,
 }
 public delegate void OnPlay();

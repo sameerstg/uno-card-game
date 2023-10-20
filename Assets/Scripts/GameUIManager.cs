@@ -14,6 +14,8 @@ public class GameUIManager : MonoBehaviour
     public GameObject cardPrefab;
     public GameObject cardBack;
     public Transform deck;
+    public GameObject chooseSuitMenu;
+    public GameObject chosenSuit;
 
     public string nameOfPlayer;
 
@@ -23,6 +25,16 @@ public class GameUIManager : MonoBehaviour
     }
     public void RefereshUi()
     {
+        if (BalootGameManager._instance.cardManager.playedCards[^1].cardName == CardName.Ace && BalootGameManager._instance.cardManager.turnChanged)
+        {
+            Sprite sprite = Instantiate(Resources.Load<Sprite>($"Cards\\" + BalootGameManager._instance.cardManager.chosenSuit.ToString() + "icon"));
+            chosenSuit.GetComponent<Image>().sprite = sprite;
+            chosenSuit.SetActive(true);
+        }
+        else
+        {
+            chosenSuit.SetActive(false);
+        }
         foreach (var item in slots)
         {
             item.turn.SetActive(false);
@@ -41,6 +53,13 @@ public class GameUIManager : MonoBehaviour
             {
                 if (BalootGameManager._instance.cardManager.playerClasses[i].cards.Count == 0)
                 {
+                    for(int j = 0; j < BalootGameManager._instance.cardManager.playerClasses.Count; j++)
+                    {
+                        slots[i].turn.SetActive(false);
+                        slots[i].takeCard.SetActive(false);
+                        slots[i].endTurn.SetActive(false);
+                        slots[i].lastCard.SetActive(false);
+                    }
                     slots[i].nameTitle.text += " Winner";
                 }
             }
@@ -98,7 +117,7 @@ public class GameUIManager : MonoBehaviour
         //Debug.LogError(RoomManager._instance.localPlayerTurn);
         //Debug.LogError(BalootGameManager._instance.cardManager.turn);
         //if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
-        if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
+        if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.indexInGlobalPlayerList)
         {
             //Debug.LogError(RoomManager._instance.indexInGlobalPlayerList);
             //Debug.LogError(RoomManager._instance.localPlayerTurn);
@@ -108,15 +127,29 @@ public class GameUIManager : MonoBehaviour
             {
                 slots[BalootGameManager._instance.cardManager.turn].takeCard.SetActive(false);
             }
-            else
+            else if(BalootGameManager._instance.cardManager.turnChanged)
             {
                 slots[RoomManager._instance.indexInGlobalPlayerList].takeCard.SetActive(true);
             }
+            if(BalootGameManager._instance.cardManager.playedCards[^1].cardName == CardName.Ace && !BalootGameManager._instance.cardManager.turnChanged)
+            {
+                slots[RoomManager._instance.indexInGlobalPlayerList].turn.SetActive(false);
+                slots[RoomManager._instance.indexInGlobalPlayerList].takeCard.SetActive(false);
+            }
+
 
             foreach (PlayerClass item in BalootGameManager._instance.cardManager.playerClasses)
             {
                 item.cardTaken = false;
             }
+        }
+        if(BalootGameManager._instance.cardManager.playerClasses[RoomManager._instance.indexInGlobalPlayerList].cards.Count != 1)
+        {
+            slots[RoomManager._instance.indexInGlobalPlayerList].lastCard.SetActive(false);
+        }
+        else if(!BalootGameManager._instance.cardManager.turnChanged)
+        {
+            slots[RoomManager._instance.indexInGlobalPlayerList].lastCard.SetActive(true);
         }
         //if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
         //{
@@ -218,4 +251,32 @@ public class GameUIManager : MonoBehaviour
         playedCardSlot.cards[^1].transform.position = deck.position;
         playedCardSlot.cards[^1].transform.DOMove(targetPosition, 1.5f);
     }
+
+    public void OpenChooseSuitMenu()
+    {
+        if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
+        {
+            slots[RoomManager._instance.indexInGlobalPlayerList].turn.SetActive(false);
+            slots[RoomManager._instance.indexInGlobalPlayerList].takeCard.SetActive(false);
+            slots[RoomManager._instance.indexInGlobalPlayerList].endTurn.SetActive(false);
+            chooseSuitMenu.SetActive(true);
+        }
+    }
+
+    public void ChooseSuit(int house)
+    {
+        chooseSuitMenu.SetActive(false);
+        BalootGameManager._instance.cardManager.chosenSuit = (House)house;
+
+        Sprite sprite = Instantiate(Resources.Load<Sprite>($"Cards\\" + BalootGameManager._instance.cardManager.chosenSuit.ToString() + "icon"));
+        chosenSuit.GetComponent<Image>().sprite = sprite;
+        chosenSuit.SetActive(true);
+        slots[RoomManager._instance.indexInGlobalPlayerList].endTurn.SetActive(true);
+    }
+
+    //public void EndTurn()
+    //{
+    //    BalootGameManager._instance.cardManager.ChangeTurn();
+    //    BalootGameManager._instance.SyncCardManager();
+    //}
 }
