@@ -40,7 +40,7 @@ public class CardManager
         }
         for (int j = 0; j < playerCount; j++)
         {
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i <7; i++)
             {
                 if (remainingDeck.Count <= 0)
                 {

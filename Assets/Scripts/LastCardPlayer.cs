@@ -12,7 +12,7 @@ public class LastCardPlayer : MonoBehaviour
     private void PressLastCard()
     {
         Debug.LogError("s");
-        if (BalootGameManager._instance.cardManager.GetPlayerByTurn().photonId == RoomManager._instance.photonId)
+        if (BalootGameManager._instance.cardManager.GetPlayerByTurn().photonId != RoomManager._instance.photonId)
         {
             return;
         }

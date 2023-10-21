@@ -148,11 +148,11 @@ public class GameUIManager : MonoBehaviour
                 item.cardTaken = false;
             }
         }
-        if(BalootGameManager._instance.cardManager.playerClasses[BalootGameManager._instance.cardManager.turn].cards.Count != 1)
+        if(BalootGameManager._instance.cardManager.GetPlayerByTurn().cards.Count != 1)
         {
             slots[BalootGameManager._instance.cardManager.turn].lastCard.SetActive(false);
         }
-        else if(!BalootGameManager._instance.cardManager.turnChanged)
+        else if(!BalootGameManager._instance.cardManager.turnChanged && BalootGameManager._instance.cardManager.GetPlayerByTurn().photonId == RoomManager._instance.photonId)
         {
             slots[BalootGameManager._instance.cardManager.turn].lastCard.SetActive(true);
         }
