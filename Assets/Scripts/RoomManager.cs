@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Bson;
 using Unity.IO.LowLevel.Unsafe;
 using ExitGames.Client.Photon.StructWrapping;
+using UnityEngine.SceneManagement;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
@@ -53,6 +54,19 @@ public class RoomManager : MonoBehaviourPunCallbacks
     private void Start()
     {
         JoinOrCreateRoom("32531ss5saf");
+    }
+    public void Leave()
+    {
+        if (PhotonNetwork.InRoom)
+        {
+            PhotonNetwork.LeaveRoom();
+        }
+        if (PhotonNetwork.InLobby)
+        {
+            PhotonNetwork.LeaveLobby();
+        }
+        PhotonNetwork.Disconnect();
+        SceneManager.LoadScene(0);
     }
     public void ReleaseBalance(string name)
     {
