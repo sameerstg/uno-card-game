@@ -28,20 +28,7 @@ public class CardManager
     public CardManager()
     {
         //totalCards = new();
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            return;
-        }
-        remainingDeck = new();
-        foreach (var house in Enum.GetNames(typeof(House)))
-        {
-            foreach (var cardName in Enum.GetNames(typeof(CardName)))
-            {
-                remainingDeck.Add(new(Enum.Parse<House>(house), Enum.Parse<CardName>(cardName)));
-            }
-        }
-
-        Debug.LogError(remainingDeck.Count);
+       
         //remainingDeck = totalCards.ToList();
     }
     public List<List<CardClass>> GetCardsForPlayers(int playerCount)
@@ -62,14 +49,29 @@ public class CardManager
                 var randomCardFromRemaining = UnityEngine.Random.Range(0, remainingDeck.Count);
                 playersCards[j].Add(remainingDeck[randomCardFromRemaining]);
                 remainingDeck.RemoveAt(randomCardFromRemaining);
-                Debug.LogError(remainingDeck.Count);
+                //Debug.LogError(remainingDeck.Count);
             }
         }
         return playersCards;
     }
     public bool StartGame(List<PlayerClass> players)
     {
-        Debug.LogError(remainingDeck.Count+"2");
+
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            return false;
+        }
+        remainingDeck = new();
+        foreach (var house in Enum.GetNames(typeof(House)))
+        {
+            foreach (var cardName in Enum.GetNames(typeof(CardName)))
+            {
+                remainingDeck.Add(new(Enum.Parse<House>(house), Enum.Parse<CardName>(cardName)));
+            }
+        }
+
+
+        Debug.LogError(remainingDeck.Count + "2");
 
         playedCards = new();
         if (players == null || players.Count == 0)
@@ -320,7 +322,7 @@ public class CardManager
         if (!isTurnReversed)
         {
             turn++;
-            if (turn >= PlayerManager._instance.players.Length)
+            if (turn >= BalootGameManager._instance.cardManager.playerClasses.Count)
             {
                 turn = 0;
             }
@@ -330,7 +332,7 @@ public class CardManager
             turn--;
             if (turn < 0)
             {
-                turn = PlayerManager._instance.players.Length - 1;
+                turn = BalootGameManager._instance.cardManager.playerClasses.Count - 1;
             }
         }
         if (skipTurn)

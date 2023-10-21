@@ -8,6 +8,8 @@ using Newtonsoft;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using Newtonsoft.Json.Bson;
+using Unity.IO.LowLevel.Unsafe;
+using ExitGames.Client.Photon.StructWrapping;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
@@ -37,6 +39,17 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
 
     }
+    [ContextMenu("check")]
+    public void Check()
+    {
+        ExitGames.Client.Photon.Hashtable properties = new() ;
+        var str = JsonConvert.SerializeObject(new List<PlayerClass>() { new("stg", "123") });
+        properties.Add("playerData",str);
+        Debug.Log(str);
+        Debug.Log(properties["playerData"]);
+       
+
+    }
     private void Start()
     {
         JoinOrCreateRoom("32531ss5saf");
@@ -57,8 +70,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
         base.OnCreatedRoom();
         Debug.LogError("Created Room");
         //InstantiateGame();
-
-        PhotonNetwork.CurrentRoom.CustomProperties.Add("playerList", new List<PlayerClass>());
+        //ExitGames.Client.Photon.Hashtable properties = PhotonNetwork.CurrentRoom.CustomProperties;
+        //properties.Add("playerList", JsonConvert.SerializeObject( new List<PlayerClass>()));
+        //PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
+        //Debug.LogError(GetPlayersFromRoomProp().Count);
         //photonViewComponent.RPC(nameof(InstantiateGame), RpcTarget.AllBufferedViaServer);
 
         //Debug.LogError(PhotonNetwork.CurrentRoom.PlayerCount);
@@ -68,7 +83,6 @@ public class RoomManager : MonoBehaviourPunCallbacks
         base.OnJoinedRoom();
         Debug.Log("Joined Room");
         photonId = PhotonNetwork.LocalPlayer.UserId;
-        AddNewPlayerRoomProp();
         StartCoroutine(SynchroniseGame());
 
     }
@@ -207,17 +221,117 @@ public class RoomManager : MonoBehaviourPunCallbacks
         balootPlayerClass = new PlayerClass() { playerName = GameUIManager._instance.nameOfPlayer, photonId = PhotonNetwork.LocalPlayer.UserId };
 
 
-        var playerList = GetPlayerFromRoomProp();
-        Debug.LogError(playerList.Count);
-        playerList.Add(balootPlayerClass);
-        PhotonNetwork.CurrentRoom.CustomProperties["playerList"] = playerList;
-        playerList = GetPlayerFromRoomProp();
+        ExitGames.Client.Photon.Hashtable properties = PhotonNetwork.CurrentRoom.CustomProperties;
+        //Debug.LogError((string)PhotonNetwork.CurrentRoom.CustomProperties["playerList"]);
 
-        Debug.LogError(playerList.Count);
+     
+        if (!properties.ContainsKey("playerList"))
+        {
+            var playerList = new List<PlayerClass>();
+
+            Debug.LogError(playerList.Count);
+            playerList.Add(balootPlayerClass);
+            properties.Add("playerList", JsonConvert.SerializeObject(playerList));
+
+        }
+        else
+        {
+            Debug.LogError((string)PhotonNetwork.CurrentRoom.CustomProperties["playerList"]);
+            var playerList = JsonConvert.DeserializeObject<List<PlayerClass>>((string)PhotonNetwork.CurrentRoom.CustomProperties["playerList"]);
+            Debug.LogError(playerList.Count);
+            playerList.Add(balootPlayerClass);
+            properties["playerList"] = JsonConvert.SerializeObject(playerList);
+        }
+        Debug.LogError(properties["playerList"]);
+        //Debug.LogError(playerList[0].playerName);
+        PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
+
+        Debug.LogError((string)PhotonNetwork.CurrentRoom.CustomProperties["playerList"]);
     }
-    List<PlayerClass> GetPlayerFromRoomProp()
+    public List<PlayerClass> GetPlayersFromRoomProp()
     {
-        return (List<PlayerClass>)PhotonNetwork.CurrentRoom.CustomProperties["playerList"];
+
+        ExitGames.Client.Photon.Hashtable properties = PhotonNetwork.CurrentRoom.CustomProperties;
+        var list = new List<PlayerClass>();
+        if (!properties.ContainsKey("playerList"))
+        {
+            Debug.LogError("player list not found");
+            return list;
+        }
+        else
+        {
+            Debug.LogError((string)PhotonNetwork.CurrentRoom.CustomProperties["playerList"]);
+            string str = (string)properties["playerList"];
+            Debug.LogError(str);
+            var players = JsonConvert.DeserializeObject<List<PlayerClass>>(str);
+            Debug.LogError(players.Count);
+            return players;
+        }
+
+    }
+    public CardManager GetCardManagerFromRoomProp()
+    {
+        ExitGames.Client.Photon.Hashtable properties = PhotonNetwork.CurrentRoom.CustomProperties;
+        if (!properties.ContainsKey("cardManager"))
+        {
+            Debug.LogError("card manager not found");
+            return null;
+        }
+        else
+        {
+
+            string str = (string)properties["cardManager"];
+            Debug.LogError(str);
+
+            var cardManager = JsonConvert.DeserializeObject<CardManager>(str);
+            Debug.LogError(cardManager);
+            return cardManager;
+
+        }
+    }
+    public void SetCardManagerInRoomProp()
+    {
+
+
+        ExitGames.Client.Photon.Hashtable properties = PhotonNetwork.CurrentRoom.CustomProperties;
+        //Debug.LogError((string)PhotonNetwork.CurrentRoom.CustomProperties["playerList"]);
+
+
+        if (!properties.ContainsKey("cardManager"))
+        {
+
+            properties.Add("cardManager", JsonConvert.SerializeObject(BalootGameManager._instance.cardManager));
+
+        }
+        else
+        {
+            properties["cardManager"] = JsonConvert.SerializeObject(BalootGameManager._instance.cardManager);
+        }
+        Debug.LogError(properties["cardManager"]);
+        //Debug.LogError(playerList[0].playerName);
+        PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
+
+        //Debug.LogError((string)PhotonNetwork.CurrentRoom.CustomProperties["cardManager"]);
+    }
+    public void SetInRoomProp(string key,object obj)
+    {
+        ExitGames.Client.Photon.Hashtable properties = PhotonNetwork.CurrentRoom.CustomProperties;
+        //Debug.LogError((string)PhotonNetwork.CurrentRoom.CustomProperties["playerList"]);
+
+
+        if (!properties.ContainsKey(key))
+        {
+
+            properties.Add(key, JsonConvert.SerializeObject(obj));
+
+        }
+        else
+        {
+            properties[key] = JsonConvert.SerializeObject(obj);
+        }
+        Debug.LogError(properties[key]);
+        //Debug.LogError(playerList[0].playerName);
+        PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
     }
     IEnumerator SynchroniseGame()
     {
@@ -227,12 +341,15 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             yield return null;
         }
+        yield return new WaitForSeconds(1);
+        AddNewPlayerRoomProp();
+
         //      if (!PlayerManager._instance.CanPlayerJoinGame())
         //{
         //    StopCoroutine(SynchroniseGame());
         //}
 
-             
+
 
         //while (json == null)
         //{
@@ -271,13 +388,18 @@ public class RoomManager : MonoBehaviourPunCallbacks
             Debug.Log("waiting for player");
         while (GameManager._instance.gameState == GameState.WaitingForOpponent)
         {
-            if (PhotonNetwork.CurrentRoom.PlayerCount== PhotonNetwork.CurrentRoom.MaxPlayers && GetPlayerFromRoomProp().Count == PhotonNetwork.CurrentRoom.MaxPlayers)
+            //Debug.LogError(GetPlayersFromRoomProp().Count);
+            //Debug.LogError(PhotonNetwork.CurrentRoom.MaxPlayers);
+            //Debug.LogError(PhotonNetwork.CurrentRoom.PlayerCount);
+            if (PhotonNetwork.CurrentRoom.PlayerCount== PhotonNetwork.CurrentRoom.MaxPlayers && GetPlayersFromRoomProp().Count == PhotonNetwork.CurrentRoom.MaxPlayers)
             {
                 GameManager._instance.gameState = GameState.InGame;
             }
             yield return null;
         }
-
+        Debug.LogError(GetPlayersFromRoomProp().Count);
+        Debug.LogError(PhotonNetwork.CurrentRoom.MaxPlayers);
+        Debug.LogError(PhotonNetwork.CurrentRoom.PlayerCount);
 
         while (GameManager._instance.gameState != GameState.InGame)
         {

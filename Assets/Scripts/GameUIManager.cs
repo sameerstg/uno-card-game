@@ -25,6 +25,11 @@ public class GameUIManager : MonoBehaviour
     }
     public void RefereshUi()
     {
+
+        Debug.LogError(BalootGameManager._instance.cardManager);
+        Debug.LogError(BalootGameManager._instance.cardManager.turnChanged);
+        Debug.LogError(BalootGameManager._instance.cardManager.playedCards[^1].cardName);
+
         if (BalootGameManager._instance.cardManager.playedCards[^1].cardName == CardName.Ace && BalootGameManager._instance.cardManager.turnChanged)
         {
             Sprite sprite = Instantiate(Resources.Load<Sprite>($"Cards\\" + BalootGameManager._instance.cardManager.chosenSuit.ToString() + "icon"));
