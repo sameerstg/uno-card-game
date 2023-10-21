@@ -16,7 +16,6 @@ public class PlayerClass
     public string playerName;
     public string photonId;
     public List<CardClass> cards = new();
-    public int turnNumber;
     public bool cardTaken = false;
     public bool lastCardPressed = false;
 
@@ -24,9 +23,10 @@ public class PlayerClass
     {
 
     }
-    public PlayerClass(string name)
+    public PlayerClass(string name,string photonId)
     {
         playerName = name;
+        this.photonId = photonId;
     }
 
 }

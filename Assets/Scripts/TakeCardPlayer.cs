@@ -12,13 +12,13 @@ public class TakeCardPlayer : MonoBehaviour
     private void TakeCard()
     {
         Debug.LogError("s");
-        if (BalootGameManager._instance.cardManager.turn != RoomManager._instance.localPlayerTurn)
+        if (BalootGameManager._instance.cardManager.GetPlayerByTurn().photonId != RoomManager._instance.photonId)
         {
             return;
         }
 
         BalootGameManager._instance.cardManager.TakeCard(true);
-        if (!BalootGameManager._instance.cardManager.CanPlay(BalootGameManager._instance.cardManager.playerClasses[RoomManager._instance.indexInGlobalPlayerList]))
+        if (!BalootGameManager._instance.cardManager.CanPlay(BalootGameManager._instance.cardManager.GetPlayerByTurn()))
         {
             BalootGameManager._instance.cardManager.AddAccruedCardsOnChangeTurn();
             BalootGameManager._instance.cardManager.ChangeTurn();

@@ -23,41 +23,38 @@ public class BalootGameManager : MonoBehaviour
         //{
         //    return;
         //}
-                  cardManager = new();
-            List<PlayerClass> list = new List<PlayerClass>();
-            for (int i = 0; i < PlayerManager._instance.players.Length; i++)
-            {
-                list.Add(PlayerManager._instance.players[i].balootPlayerClass);
-            Debug.LogError(this.cardManager.remainingDeck.Count);
+        cardManager = new();
+        List<PlayerClass> list = (List<PlayerClass>)PhotonNetwork.CurrentRoom.CustomProperties["playerList"];
+        List<PlayerClass> scrambleList = new();
+
+        for (int i = 0; i < list.Count; i++)
+        {
+            var randPlayer = list[Random.Range(0, list.Count)];
+            scrambleList.Add(randPlayer);
+            list.Remove(randPlayer);
         }
+        PhotonNetwork.CurrentRoom.CustomProperties["playerList"] = scrambleList;
+        list = (List<PlayerClass>)PhotonNetwork.CurrentRoom.CustomProperties["playerList"];
         this.cardManager.StartGame(list);
-            Debug.LogError(this.cardManager.remainingDeck.Count);
+        Debug.LogError(this.cardManager.remainingDeck.Count);
         Debug.LogError("sync se pehle :  remaining: " + this.cardManager.remainingDeck.Count + " played: " + this.cardManager.playedCards.Count + " p1: " + this.cardManager.playerClasses[0].cards.Count + " p2: " + this.cardManager.playerClasses[1].cards.Count);
 
-        photonView.RPC(nameof(SyncNewGame), RpcTarget.All, new object[] { JsonConvert.SerializeObject(cardManager) });
-      
+        PhotonNetwork.CurrentRoom.CustomProperties.Add("cardManager", cardManager);
+        photonView.RPC(nameof(SyncNewGame), RpcTarget.All);
+
 
         //GiveCardsToPlayer();
     }
     [PunRPC]
-    public void SyncNewGame(string cardManagerParam)
+    public void SyncNewGame()
     {
         this.cardManager = null;
-        cardManager = JsonUtility.FromJson<CardManager>(cardManagerParam);
-        for(int i = 0;i< cardManager.playerClasses.Count;i++)
-        {
-            if (cardManager.playerClasses[i].photonId == PhotonNetwork.LocalPlayer.UserId)
-            {
-                RoomManager._instance.localPlayerTurn = cardManager.playerClasses[i].turnNumber;
-                RoomManager._instance.indexInGlobalPlayerList = i;
-            }
-        }
-        Debug.LogError("remaining: "+this.cardManager.remainingDeck.Count + " played: " + this.cardManager.playedCards.Count +" p1: "+ this.cardManager.playerClasses[0].cards.Count + " p2: " + this.cardManager.playerClasses[1].cards.Count);
-
+        cardManager = (CardManager)PhotonNetwork.CurrentRoom.CustomProperties["cardManager"];
+        Debug.LogError("remaining: " + this.cardManager.remainingDeck.Count + " played: " + this.cardManager.playedCards.Count + " p1: " + this.cardManager.playerClasses[0].cards.Count + " p2: " + this.cardManager.playerClasses[1].cards.Count);
         //GameUIManager._instance.RefereshUi();
         GameUIManager._instance.DistributeCards();
     }
-   
+
     [PunRPC]
     public void SyncCardManagerRPC(string cardManager)
     {
@@ -66,13 +63,13 @@ public class BalootGameManager : MonoBehaviour
         GameUIManager._instance.RefereshUi();
         Debug.LogError(cardManager.Length);
         //Debug.LogError(cardManager);
-        File.WriteAllText("logde.json",cardManager);
-        Debug.LogError("remaining: "+this.cardManager.remainingDeck.Count + " played: " + this.cardManager.playedCards.Count +" p1: "+ this.cardManager.playerClasses[0].cards.Count + " p2: " + this.cardManager.playerClasses[1].cards.Count);
+        File.WriteAllText("logde.json", cardManager);
+        Debug.LogError("remaining: " + this.cardManager.remainingDeck.Count + " played: " + this.cardManager.playedCards.Count + " p1: " + this.cardManager.playerClasses[0].cards.Count + " p2: " + this.cardManager.playerClasses[1].cards.Count);
 
     }
     public void SyncCardManager()
     {
-        Debug.LogError("deraahaha hai:    remaining: "+this.cardManager.remainingDeck.Count + " played: " + this.cardManager.playedCards.Count +" p1: "+ this.cardManager.playerClasses[0].cards.Count + " p2: " + this.cardManager.playerClasses[1].cards.Count);
+        Debug.LogError("deraahaha hai:    remaining: " + this.cardManager.remainingDeck.Count + " played: " + this.cardManager.playedCards.Count + " p1: " + this.cardManager.playerClasses[0].cards.Count + " p2: " + this.cardManager.playerClasses[1].cards.Count);
 
         photonView.RPC(nameof(SyncCardManagerRPC), RpcTarget.AllBufferedViaServer, JsonConvert.SerializeObject(cardManager));
     }
@@ -80,7 +77,8 @@ public class BalootGameManager : MonoBehaviour
     {
         player.cards.Add(card);
     }
-   
-   
+    
+
+
 
 }

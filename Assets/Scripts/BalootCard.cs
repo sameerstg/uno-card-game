@@ -16,7 +16,7 @@ public class BalootCard : MonoBehaviour
 
     private void SelectCard()
     {
-        if (BalootGameManager._instance.cardManager.turn != RoomManager._instance.localPlayerTurn)
+        if (BalootGameManager._instance.cardManager.GetPlayerByTurn().photonId != RoomManager._instance.photonId)
         {
             return;
         }
@@ -26,7 +26,7 @@ public class BalootCard : MonoBehaviour
         //if (BalootGameManager._instance.cardManager.turn != transform.parent.parent.GetSiblingIndex())
         //    return;
 
-        if (!BalootGameManager._instance.cardManager.playerClasses[RoomManager._instance.indexInGlobalPlayerList].cards.Exists(x => x.cardName == cardClass.cardName && x.house == cardClass.house))
+        if (!BalootGameManager._instance.cardManager.GetPlayerByTurn().cards.Exists(x => x.cardName == cardClass.cardName && x.house == cardClass.house))
             return;
         //Debug.LogError(BalootGameManager._instance.cardManager.CanPlay(cardClass));
         for (int i = 0; i < transform.parent.childCount; i++)

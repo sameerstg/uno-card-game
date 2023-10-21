@@ -6,6 +6,8 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Newtonsoft;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using Newtonsoft.Json.Bson;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
@@ -13,13 +15,12 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public TextMeshProUGUI statusText;
     PhotonView photonViewComponent;
     public PlayerClass balootPlayerClass;
-    public int localPlayerTurn;
+    public string photonId;
     public string nameOfPlayer;
     internal BalootPlayer recentlyJoinedPlayer;
-    public int indexInGlobalPlayerList ;
 
     public bool DidTimeout { private set; get; }
-    static readonly RoomOptions s_RoomOptions = new RoomOptions
+    public static readonly RoomOptions s_RoomOptions = new RoomOptions
     {
         MaxPlayers = 2,
         EmptyRoomTtl = 5,
@@ -29,11 +30,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     void Awake()
     {
-        indexInGlobalPlayerList = -1;
         _instance = this;
         Assert.AreEqual(1, FindObjectsOfType<RoomManager>().Length);
         photonViewComponent = GetComponent<PhotonView>();
-        localPlayerTurn = -1;
         
 
 
@@ -59,15 +58,17 @@ public class RoomManager : MonoBehaviourPunCallbacks
         Debug.LogError("Created Room");
         //InstantiateGame();
 
+        PhotonNetwork.CurrentRoom.CustomProperties.Add("playerList", new List<PlayerClass>());
+        //photonViewComponent.RPC(nameof(InstantiateGame), RpcTarget.AllBufferedViaServer);
 
-        photonViewComponent.RPC(nameof(InstantiateGame), RpcTarget.AllBufferedViaServer);
-
-        Debug.LogError(PhotonNetwork.CurrentRoom.PlayerCount);
+        //Debug.LogError(PhotonNetwork.CurrentRoom.PlayerCount);
     }
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
         Debug.Log("Joined Room");
+        photonId = PhotonNetwork.LocalPlayer.UserId;
+        AddNewPlayerRoomProp();
         StartCoroutine(SynchroniseGame());
 
     }
@@ -171,7 +172,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public void InstantiateGame()
     {
         Debug.Log("Room Objects Created");
-        PhotonNetwork.InstantiateRoomObject("GameManager", new Vector3(), Quaternion.identity);
+        //PhotonNetwork.InstantiateRoomObject("GameManager", new Vector3(), Quaternion.identity);
     }
     [PunRPC]
     public void InstantiatePlayer()
@@ -201,6 +202,23 @@ public class RoomManager : MonoBehaviourPunCallbacks
         GameManager._instance.gameState = GameState.PostInstantiate;
         
     }
+    void AddNewPlayerRoomProp()
+    {
+        balootPlayerClass = new PlayerClass() { playerName = GameUIManager._instance.nameOfPlayer, photonId = PhotonNetwork.LocalPlayer.UserId };
+
+
+        var playerList = GetPlayerFromRoomProp();
+        Debug.LogError(playerList.Count);
+        playerList.Add(balootPlayerClass);
+        PhotonNetwork.CurrentRoom.CustomProperties["playerList"] = playerList;
+        playerList = GetPlayerFromRoomProp();
+
+        Debug.LogError(playerList.Count);
+    }
+    List<PlayerClass> GetPlayerFromRoomProp()
+    {
+        return (List<PlayerClass>)PhotonNetwork.CurrentRoom.CustomProperties["playerList"];
+    }
     IEnumerator SynchroniseGame()
     {
 
@@ -209,24 +227,22 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             yield return null;
         }
-              if (!PlayerManager._instance.CanPlayerJoinGame())
-        {
-            StopCoroutine(SynchroniseGame());
-        }
+        //      if (!PlayerManager._instance.CanPlayerJoinGame())
+        //{
+        //    StopCoroutine(SynchroniseGame());
+        //}
 
-              balootPlayerClass = new PlayerClass() { playerName = GameUIManager._instance.nameOfPlayer ,photonId = PhotonNetwork.LocalPlayer.UserId};
+             
 
-        var json = JsonConvert.SerializeObject(balootPlayerClass);
-        while (json == null)
-        {
-            yield return null;
-        }
-        localPlayerTurn = -1;
-                photonViewComponent.RPC(nameof(InstantiateAndAssignPlayer), RpcTarget.AllBufferedViaServer,new object[] {json } );
-        while(localPlayerTurn == -1 || balootPlayerClass==null )
-        {
-            yield return null;
-        }
+        //while (json == null)
+        //{
+        //    yield return null;
+        //}
+        //        //photonViewComponent.RPC(nameof(InstantiateAndAssignPlayer), RpcTarget.AllBufferedViaServer);
+        //while(balootPlayerClass==null )
+        //{
+        //    yield return null;
+        //}
 
 
         while (GameManager._instance.gameState == GameState.WaitingForOpponent)
@@ -245,17 +261,17 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
      
         GameManager._instance.gameState = GameState.WaitingForOpponent;
-        if (!PlayerManager._instance.CanPlayerJoinGame())
-        {
+        //if (!PlayerManager._instance.CanPlayerJoinGame())
+        //{
 
 
-        }
+        //}
 
 
             Debug.Log("waiting for player");
         while (GameManager._instance.gameState == GameState.WaitingForOpponent)
         {
-            if (!PlayerManager._instance.CanPlayerJoinGame())
+            if (PhotonNetwork.CurrentRoom.PlayerCount== PhotonNetwork.CurrentRoom.MaxPlayers && GetPlayerFromRoomProp().Count == PhotonNetwork.CurrentRoom.MaxPlayers)
             {
                 GameManager._instance.gameState = GameState.InGame;
             }
@@ -267,17 +283,20 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             yield return null;
         }
-       
-        
+
+        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+        {
+            BalootGameManager._instance.NewGame();
+        }
         
 
     }
     [PunRPC]
-    private void InstantiateAndAssignPlayer(string balootPlayer)
+    private void InstantiateAndAssignPlayer()
     {
-        var balootPlayerClass = JsonConvert.DeserializeObject<PlayerClass>(balootPlayer);
-        
-        PlayerManager._instance.AssignPlayer(balootPlayerClass);
+        //var balootPlayerClass = JsonConvert.DeserializeObject<PlayerClass>(balootPlayer);
+
+        //PlayerManager._instance.AssignPlayer(balootPlayerClass);
 
         
     }

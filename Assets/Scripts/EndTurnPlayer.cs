@@ -19,11 +19,11 @@ public class EndTurnPlayer : MonoBehaviour
     private void EndTurn()
     {
         Debug.LogError("s");
-        if (BalootGameManager._instance.cardManager.turn != RoomManager._instance.localPlayerTurn)
+        if (BalootGameManager._instance.cardManager.GetPlayerByTurn().photonId != RoomManager._instance.photonId)
         {
             return;
         }
-        if(BalootGameManager._instance.cardManager.playerClasses[RoomManager._instance.localPlayerTurn].cards.Count == 1 && !BalootGameManager._instance.cardManager.playerClasses[RoomManager._instance.localPlayerTurn].lastCardPressed)
+        if(BalootGameManager._instance.cardManager.GetPlayerByTurn().cards.Count == 1 && !BalootGameManager._instance.cardManager.GetPlayerByTurn().lastCardPressed)
         {
             BalootGameManager._instance.cardManager.TakeCard();
         }

@@ -76,12 +76,7 @@ public class CardManager
         {
             return false;
         }
-        List<int> numbers = new();
-        for (int i = 0; i < players.Count; i++)
-        {
-            numbers.Add(i);
-        }
-
+       
 
 
         var playersCards = GetCardsForPlayers(players.Count);
@@ -91,9 +86,6 @@ public class CardManager
             {
                 players[i].cards.Add(item);
             }
-            int s = numbers[UnityEngine.Random.Range(0, numbers.Count)];
-            players[i].turnNumber = s;
-            numbers.Remove(s);
         }
         if (remainingDeck.Count <= 0)
         {
@@ -159,11 +151,11 @@ public class CardManager
             }
         }
         var randCard = UnityEngine.Random.Range(0, remainingDeck.Count);
-        playerClasses[RoomManager._instance.indexInGlobalPlayerList].cards.Add(remainingDeck[randCard]);
+        BalootGameManager._instance.cardManager.GetPlayerByTurn().cards.Add(remainingDeck[randCard]);
         remainingDeck.RemoveAt(randCard);
         if(cardPicked)
         {
-            playerClasses[RoomManager._instance.indexInGlobalPlayerList].cardTaken = true;
+            BalootGameManager._instance.cardManager.GetPlayerByTurn().cardTaken = true;
             //playerClasses[RoomManager._instance.indexInGlobalPlayerList].cardTaken = true;
         }
         BalootGameManager._instance.SyncCardManager();
@@ -186,8 +178,8 @@ public class CardManager
             //Debug.LogError("Can Play Card: " + canPlay);
             //if (canPlay)
             //{
-            var card = playerClasses[RoomManager._instance.indexInGlobalPlayerList].cards.Find(x => selectedCard.house == x.house && selectedCard.cardName == x.cardName);
-            bool s = playerClasses[RoomManager._instance.indexInGlobalPlayerList].cards.Remove(card);
+            var card = BalootGameManager._instance.cardManager.GetPlayerByTurn().cards.Find(x => selectedCard.house == x.house && selectedCard.cardName == x.cardName);
+            bool s = BalootGameManager._instance.cardManager.GetPlayerByTurn().cards.Remove(card);
             //Debug.LogError("Card removed: " + s);
             playedCards.Add(card);
 
@@ -250,17 +242,17 @@ public class CardManager
             }
             else if (!canPlay)
             {
-                if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
+                if (playerClasses[BalootGameManager._instance.cardManager.turn].photonId == RoomManager._instance.photonId)
                 {
-                    GameUIManager._instance.slots[RoomManager._instance.indexInGlobalPlayerList].endTurn.SetActive(false);
+                    GameUIManager._instance.slots[BalootGameManager._instance.cardManager.turn].endTurn.SetActive(false);
                 }
                 ChangeTurn();
             }
             else
             {
-                if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
+                if (playerClasses[BalootGameManager._instance.cardManager.turn].photonId == RoomManager._instance.photonId)
                 {
-                    GameUIManager._instance.slots[RoomManager._instance.indexInGlobalPlayerList].endTurn.SetActive(true);
+                    GameUIManager._instance.slots[BalootGameManager._instance.cardManager.turn].endTurn.SetActive(true);
                 }
             }
             //else
@@ -414,6 +406,10 @@ public class CardManager
     public bool IsGameEnded()
     {
         return playerClasses.Exists(x => x.cards.Count == 0);
+    }
+    public PlayerClass GetPlayerByTurn()
+    {
+        return playerClasses[turn];
     }
 
 }

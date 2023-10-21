@@ -15,7 +15,7 @@ public class TurnPlayer : MonoBehaviour
     private void PlayCardTurn()
     {
         //Debug.LogError("s");
-        if (BalootGameManager._instance.cardManager.turn  != RoomManager._instance.localPlayerTurn)
+        if (BalootGameManager._instance.cardManager.GetPlayerByTurn().photonId != RoomManager._instance.photonId)
         {
             return;
         }

@@ -12,11 +12,11 @@ public class LastCardPlayer : MonoBehaviour
     private void PressLastCard()
     {
         Debug.LogError("s");
-        if (BalootGameManager._instance.cardManager.turn != RoomManager._instance.localPlayerTurn)
+        if (BalootGameManager._instance.cardManager.GetPlayerByTurn().photonId == RoomManager._instance.photonId)
         {
             return;
         }
-        BalootGameManager._instance.cardManager.playerClasses[RoomManager._instance.localPlayerTurn].lastCardPressed = true;
+        BalootGameManager._instance.cardManager.GetPlayerByTurn().lastCardPressed = true;
         Debug.Log("Last Card Pressed");
         gameObject.SetActive(false);
     }

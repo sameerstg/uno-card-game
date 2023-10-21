@@ -5337,7 +5337,6 @@ MonoBehaviour:
     playerName: 
     photonId: 
     cards: []
-    turnNumber: 0
     cardTaken: 0
     lastCardPressed: 0
   localPlayerTurn: 0
@@ -8579,6 +8578,259 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2116495206}
   m_CullTransparentMesh: 1
+--- !u!114 &1224409634285812917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3451744207947971693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 2
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!1 &3451744207671943072
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3451744207671943073}
+  - component: {fileID: 3451744207671943074}
+  - component: {fileID: 6521935768917300058}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3451744207671943073
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3451744207671943072}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 640.4355, y: 380.6545, z: 19.74966}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3451744207947971694}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3451744207671943074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3451744207671943072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a265b6b1bf843cd44ad90fa695e9a82e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameState: 0
+--- !u!1 &3451744207947971693
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3451744207947971694}
+  - component: {fileID: 3451744207947971695}
+  - component: {fileID: 1224409634285812917}
+  m_Layer: 0
+  m_Name: 'BalootGameManager '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3451744207947971694
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3451744207947971693}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3451744207671943073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3451744207947971695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3451744207947971693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e706ff51df2c4ed4b9567894637dade1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cardManager:
+    remainingDeck:
+    - house: 0
+      cardName: 0
+    - house: 0
+      cardName: 1
+    - house: 0
+      cardName: 2
+    - house: 0
+      cardName: 3
+    - house: 0
+      cardName: 4
+    - house: 0
+      cardName: 5
+    - house: 0
+      cardName: 6
+    - house: 0
+      cardName: 7
+    - house: 0
+      cardName: 8
+    - house: 0
+      cardName: 9
+    - house: 0
+      cardName: 10
+    - house: 0
+      cardName: 11
+    - house: 0
+      cardName: 12
+    - house: 1
+      cardName: 0
+    - house: 1
+      cardName: 1
+    - house: 1
+      cardName: 2
+    - house: 1
+      cardName: 3
+    - house: 1
+      cardName: 4
+    - house: 1
+      cardName: 5
+    - house: 1
+      cardName: 6
+    - house: 1
+      cardName: 7
+    - house: 1
+      cardName: 8
+    - house: 1
+      cardName: 9
+    - house: 1
+      cardName: 10
+    - house: 1
+      cardName: 11
+    - house: 1
+      cardName: 12
+    - house: 2
+      cardName: 0
+    - house: 2
+      cardName: 1
+    - house: 2
+      cardName: 2
+    - house: 2
+      cardName: 3
+    - house: 2
+      cardName: 4
+    - house: 2
+      cardName: 5
+    - house: 2
+      cardName: 6
+    - house: 2
+      cardName: 7
+    - house: 2
+      cardName: 8
+    - house: 2
+      cardName: 9
+    - house: 2
+      cardName: 10
+    - house: 2
+      cardName: 11
+    - house: 2
+      cardName: 12
+    - house: 3
+      cardName: 0
+    - house: 3
+      cardName: 1
+    - house: 3
+      cardName: 2
+    - house: 3
+      cardName: 3
+    - house: 3
+      cardName: 4
+    - house: 3
+      cardName: 5
+    - house: 3
+      cardName: 6
+    - house: 3
+      cardName: 7
+    - house: 3
+      cardName: 8
+    - house: 3
+      cardName: 9
+    - house: 3
+      cardName: 10
+    - house: 3
+      cardName: 11
+    - house: 3
+      cardName: 12
+    playerClasses: []
+    playedCards: []
+    turn: 0
+    chosenSuit: 0
+    isTurnReversed: 0
+    skipTurn: 0
+    twosCount: 0
+    blackJacksCount: 0
+    turnChanged: 1
+  photonView: {fileID: 0}
+--- !u!114 &6521935768917300058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3451744207671943072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 0
+  ObservedComponents:
+  - {fileID: 0}
+  sceneViewId: 3
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -8587,3 +8839,4 @@ SceneRoots:
   - {fileID: 1150845809}
   - {fileID: 619183816}
   - {fileID: 241615216}
+  - {fileID: 3451744207671943073}

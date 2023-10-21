@@ -117,24 +117,24 @@ public class GameUIManager : MonoBehaviour
         //Debug.LogError(RoomManager._instance.localPlayerTurn);
         //Debug.LogError(BalootGameManager._instance.cardManager.turn);
         //if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
-        if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.indexInGlobalPlayerList)
+        if (BalootGameManager._instance.cardManager.GetPlayerByTurn().photonId == RoomManager._instance.photonId)
         {
             //Debug.LogError(RoomManager._instance.indexInGlobalPlayerList);
             //Debug.LogError(RoomManager._instance.localPlayerTurn);
             //slots[RoomManager._instance.indexInGlobalPlayerList].nameTitle.text += $" Turn";
-            slots[RoomManager._instance.indexInGlobalPlayerList].turn.SetActive(true);
-            if (BalootGameManager._instance.cardManager.playerClasses[RoomManager._instance.indexInGlobalPlayerList].cardTaken && BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
+            slots[BalootGameManager._instance.cardManager.turn].turn.SetActive(true);
+            if (BalootGameManager._instance.cardManager.GetPlayerByTurn().cardTaken)
             {
                 slots[BalootGameManager._instance.cardManager.turn].takeCard.SetActive(false);
             }
             else if(BalootGameManager._instance.cardManager.turnChanged)
             {
-                slots[RoomManager._instance.indexInGlobalPlayerList].takeCard.SetActive(true);
+                slots[BalootGameManager._instance.cardManager.turn].takeCard.SetActive(true);
             }
             if(BalootGameManager._instance.cardManager.playedCards[^1].cardName == CardName.Ace && !BalootGameManager._instance.cardManager.turnChanged)
             {
-                slots[RoomManager._instance.indexInGlobalPlayerList].turn.SetActive(false);
-                slots[RoomManager._instance.indexInGlobalPlayerList].takeCard.SetActive(false);
+                slots[BalootGameManager._instance.cardManager.turn].turn.SetActive(false);
+                slots[BalootGameManager._instance.cardManager.turn].takeCard.SetActive(false);
             }
 
 
@@ -143,13 +143,13 @@ public class GameUIManager : MonoBehaviour
                 item.cardTaken = false;
             }
         }
-        if(BalootGameManager._instance.cardManager.playerClasses[RoomManager._instance.indexInGlobalPlayerList].cards.Count != 1)
+        if(BalootGameManager._instance.cardManager.playerClasses[BalootGameManager._instance.cardManager.turn].cards.Count != 1)
         {
-            slots[RoomManager._instance.indexInGlobalPlayerList].lastCard.SetActive(false);
+            slots[BalootGameManager._instance.cardManager.turn].lastCard.SetActive(false);
         }
         else if(!BalootGameManager._instance.cardManager.turnChanged)
         {
-            slots[RoomManager._instance.indexInGlobalPlayerList].lastCard.SetActive(true);
+            slots[BalootGameManager._instance.cardManager.turn].lastCard.SetActive(true);
         }
         //if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
         //{
@@ -254,11 +254,11 @@ public class GameUIManager : MonoBehaviour
 
     public void OpenChooseSuitMenu()
     {
-        if (BalootGameManager._instance.cardManager.turn == RoomManager._instance.localPlayerTurn)
+        if (BalootGameManager._instance.cardManager.GetPlayerByTurn().photonId == RoomManager._instance.photonId)
         {
-            slots[RoomManager._instance.indexInGlobalPlayerList].turn.SetActive(false);
-            slots[RoomManager._instance.indexInGlobalPlayerList].takeCard.SetActive(false);
-            slots[RoomManager._instance.indexInGlobalPlayerList].endTurn.SetActive(false);
+            slots[BalootGameManager._instance.cardManager.turn].turn.SetActive(false);
+            slots[BalootGameManager._instance.cardManager.turn].takeCard.SetActive(false);
+            slots[BalootGameManager._instance.cardManager.turn].endTurn.SetActive(false);
             chooseSuitMenu.SetActive(true);
         }
     }
@@ -271,7 +271,7 @@ public class GameUIManager : MonoBehaviour
         Sprite sprite = Instantiate(Resources.Load<Sprite>($"Cards\\" + BalootGameManager._instance.cardManager.chosenSuit.ToString() + "icon"));
         chosenSuit.GetComponent<Image>().sprite = sprite;
         chosenSuit.SetActive(true);
-        slots[RoomManager._instance.indexInGlobalPlayerList].endTurn.SetActive(true);
+        slots[BalootGameManager._instance.cardManager.turn].endTurn.SetActive(true);
     }
 
     //public void EndTurn()
