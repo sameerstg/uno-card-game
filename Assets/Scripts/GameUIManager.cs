@@ -18,7 +18,7 @@ public class GameUIManager : MonoBehaviour
     public GameObject chosenSuit;
 
     public string nameOfPlayer;
-
+    public bool devMode;
     private void Awake()
     {
         _instance = this;
@@ -54,6 +54,15 @@ public class GameUIManager : MonoBehaviour
             slots[i].cards.Clear();
             slots[i].nameTitle.text = BalootGameManager._instance.cardManager.playerClasses[i].playerName;
 
+            if (BalootGameManager._instance.cardManager.playerClasses[i].photonId == RoomManager._instance.photonId)
+            {
+                slots[i].nameTitle.color = Color.green;
+            }
+            else
+            {
+                slots[i].nameTitle.color = Color.white;
+
+            }
             if (BalootGameManager._instance.cardManager.IsGameEnded())
             {
                 if (BalootGameManager._instance.cardManager.playerClasses[i].cards.Count == 0)
@@ -74,15 +83,30 @@ public class GameUIManager : MonoBehaviour
             }
             for (int k = 0; k < BalootGameManager._instance.cardManager.playerClasses[i].cards.Count; k++)
             {
-                Texture2D texture = Instantiate
-    (Resources.Load<Texture2D>(($"Cards\\" + BalootGameManager._instance.cardManager.playerClasses[i].cards[k].house + "\\"
-    + $"{BalootGameManager._instance.cardManager.playerClasses[i].cards[k].cardName}")));
+                //UnrevealedCard
+               
+              
                 //Debug.Log(texture);
                 GameObject card = Instantiate(cardPrefab, slots[i].cardParent.transform);
                 slots[i].cards.Add(card);
                 var cardClass = card.AddComponent<BalootCard>();
                 cardClass.cardClass = new(BalootGameManager._instance.cardManager.playerClasses[i].cards[k].house, BalootGameManager._instance.cardManager.playerClasses[i].cards[k].cardName);
-                cardClass.GetComponent<RawImage>().texture = texture;
+               
+                if (BalootGameManager._instance.cardManager.playerClasses[i].photonId != RoomManager._instance.photonId && !devMode)
+                {
+                    Texture2D texture = Instantiate
+                       (Resources.Load<Texture2D>(($"Cards\\" + "UnrevealedCard")));
+                    cardClass.GetComponent<RawImage>().texture = texture;
+                }
+                else
+                {
+
+                    Texture2D texture = Instantiate
+      (Resources.Load<Texture2D>(($"Cards\\" + BalootGameManager._instance.cardManager.playerClasses[i].cards[k].house + "\\"
+      + $"{BalootGameManager._instance.cardManager.playerClasses[i].cards[k].cardName}")));
+                    cardClass.GetComponent<RawImage>().texture = texture;
+                }
+
 
             }
         }
@@ -104,6 +128,9 @@ public class GameUIManager : MonoBehaviour
         }
         Debug.Log(BalootGameManager._instance.cardManager.playedCards[^1].house);
         Debug.Log(BalootGameManager._instance.cardManager.playedCards[^1].cardName);
+
+
+
         Texture2D texture = Instantiate
                     (Resources.Load<Texture2D>(($"Cards\\" + BalootGameManager._instance.cardManager.playedCards[^1].house + "\\"
                     + $"{BalootGameManager._instance.cardManager.playedCards[^1].cardName}")));
@@ -186,15 +213,30 @@ public class GameUIManager : MonoBehaviour
     IEnumerator CardAnimation(int i, int k)
     {
         print("CardAnimation started " + i + " " + k + " " + Time.time);
-        Texture2D texture = Instantiate
-                    (Resources.Load<Texture2D>(($"Cards\\" + BalootGameManager._instance.cardManager.playerClasses[i].cards[k].house + "\\"
-                    + $"{BalootGameManager._instance.cardManager.playerClasses[i].cards[k].cardName}")));
-        Debug.Log(texture);
+
+
+
+        //Debug.Log(texture);
         GameObject card = Instantiate(cardPrefab, deck);
         GameObject carBack = Instantiate(cardBack, card.transform);
         var cardClass = card.AddComponent<BalootCard>();
         cardClass.cardClass = new(BalootGameManager._instance.cardManager.playerClasses[i].cards[k].house, BalootGameManager._instance.cardManager.playerClasses[i].cards[k].cardName);
-        cardClass.GetComponent<RawImage>().texture = texture;
+
+
+        if (BalootGameManager._instance.cardManager.playerClasses[i].photonId != RoomManager._instance.photonId && !devMode)
+        {
+            Texture2D texture = Instantiate
+               (Resources.Load<Texture2D>(($"Cards\\" + "UnrevealedCard")));
+            cardClass.GetComponent<RawImage>().texture = texture;
+        }
+        else
+        {
+            Texture2D texture = Instantiate
+                     (Resources.Load<Texture2D>(($"Cards\\" + BalootGameManager._instance.cardManager.playerClasses[i].cards[k].house + "\\"
+                     + $"{BalootGameManager._instance.cardManager.playerClasses[i].cards[k].cardName}")));
+            cardClass.GetComponent<RawImage>().texture = texture;
+        }
+       
         card.transform.position = deck.position;
         card.GetComponent<RectTransform>().DOSizeDelta(new Vector2(100, 140), 0f);
         Vector3 targetPosition = slots[i].cardParent.transform.position;
@@ -237,6 +279,7 @@ public class GameUIManager : MonoBehaviour
         {
             StartCoroutine(PlayedCardAnimation());
             yield return new WaitForSeconds(1.5f);
+            RefereshUi();
             ShowTurn();
         }
     }
